@@ -1,0 +1,152 @@
+{
+  "nav": {
+    "gameHall": "Game Hall",
+    "archive": "Archive",
+    "achievements": "Achievements",
+    "language": "Language"
+  },
+  "hero": {
+    "title": "INFINITE THEATER",
+    "subtitle": "Every choice shapes a new destiny.",
+    "description": "Here, you are the protagonist of the story, and also the writer of fate.",
+    "stats": {
+      "stories": "Stories",
+      "endings": "Endings",
+      "nodes": "Nodes"
+    }
+  },
+  "games": {
+    "rainyNight": {
+      "title": "A Call in the Rain",
+      "description": "Late at night, a mysterious call shatters the silence. You are detective Lin Xiao, receiving a desperate plea for help from a mysterious woman...",
+      "duration": "30-45 min",
+      "nodes": "35 nodes",
+      "tags": ["Mystery", "Detective", "Thriller", "Urban"]
+    },
+    "deepSea": {
+      "title": "Deep Sea Embers",
+      "description": "4000 meters below, the \"Achilles\" base suddenly goes silent. You wake in darkness, surrounded by eerie red warning lights...",
+      "duration": "45-60 min",
+      "nodes": "40 nodes",
+      "tags": ["Sci-Fi", "Survival", "Horror", "Deep Sea"]
+    },
+    "pirateLegend": {
+      "title": "Legend of the Seas",
+      "description": "1698, Caribbean Sea. You are the feared \"Blood Moon Queen\" Roshan, a mysterious treasure map leads you to the legendary Ghost Island...",
+      "duration": "40-55 min",
+      "nodes": "37 nodes",
+      "tags": ["Adventure", "Pirate", "Treasure", "History"]
+    },
+    "ancientMystery": {
+      "title": "Tomb of Secrets",
+      "description": "Archaeologist Ye Yunxiao discovers an ancient imperial tomb never recorded in history, but touching it may trigger a thousand-year curse...",
+      "duration": "45-60 min",
+      "nodes": "25 nodes",
+      "tags": ["Ancient", "Mystery", "Archaeology", "Adventure"]
+    },
+    "cyberDetective": {
+      "title": "Cyber Detective",
+      "description": "2087, cyborg detective \"Zero\" receives an impossible case—the murderer is an AI that doesn't exist...",
+      "duration": "50-65 min",
+      "nodes": "28 nodes",
+      "tags": ["Sci-Fi", "Cyberpunk", "Detective", "Future"]
+    },
+    "palaceIntrigue": {
+      "title": "Palace Intrigue",
+      "description": "Newly arrived concubine Shen Ruohua is caught in a power struggle on her first day in the palace. How to survive and protect justice?",
+      "duration": "40-55 min",
+      "nodes": "32 nodes",
+      "tags": ["Ancient", "Court", "Politics", "Romance"]
+    },
+    "wildernesssurvival": {
+      "title": "Into the Wild",
+      "description": "The plane crashes in a remote wilderness. Retired special forces Lin Feng must lead survivors through extreme survival...",
+      "duration": "45-60 min",
+      "nodes": "30 nodes",
+      "tags": ["Survival", "Adventure", "Extreme", "Team"]
+    },
+    "fantasyHealer": {
+      "title": "Light of Healing",
+      "description": "A girl named Ella with mysterious healing powers must use the power of life to fight darkness as the kingdom is consumed...",
+      "duration": "30-45 min",
+      "nodes": "35 nodes",
+      "tags": ["Fantasy", "Healing", "Magic", "Adventure"]
+    },
+    "spaceDiplomat": {
+      "title": "Interstellar Diplomacy",
+      "description": "2350, first contact with alien civilization. One misunderstanding could trigger interstellar war. You are the only one who can prevent disaster...",
+      "duration": "40-55 min",
+      "nodes": "32 nodes",
+      "tags": ["Sci-Fi", "Diplomacy", "Space", "Future"]
+    },
+    "horrorHospital": {
+      "title": "Forbidden Ward",
+      "description": "Psychologist Su Ming investigates an abandoned psychiatric hospital, only to discover an inexplicable connection to this place...",
+      "duration": "50-65 min",
+      "nodes": "30 nodes",
+      "tags": ["Horror", "Psychology", "Mystery", "Dark"]
+    },
+    "campusMystery": {
+      "title": "Campus Detective",
+      "description": "High school detective Gu Xiao receives a mysterious note, uncovering a conspiracy targeting her classmates' dreams...",
+      "duration": "30-45 min",
+      "nodes": "49 nodes",
+      "tags": ["Campus", "Detective", "Youth", "Justice"]
+    },
+    "desertKingdom": {
+      "title": "Desert Kingdom",
+      "description": "Exiled prince Salim decides to reclaim his kingdom from the usurper. Which is the true answer—force or wisdom?",
+      "duration": "40-55 min",
+      "nodes": "32 nodes",
+      "tags": ["Fantasy", "Kingdom", "Desert", "Adventure"]
+    }
+  },
+  "buttons": {
+    "startAdventure": "Start Adventure",
+    "continueGame": "Continue",
+    "backToHall": "Back to Hall",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "unlockConditions": {
+    "complete": "Complete",
+    "anyEnding": "any ending to unlock"
+  },
+  "archive": {
+    "title": "Archive Management",
+    "progress": "Progress",
+    "endings": "Endings Collected",
+    "noData": "No save data yet"
+  },
+  "achievements": {
+    "title": "Achievements",
+    "locked": "Locked",
+    "unlocked": "Unlocked"
+  },
+  "gamePlayer": {
+    "attributes": {
+      "trust": "Trust",
+      "clues": "Clues",
+      "pressure": "Pressure",
+      "health": "Health",
+      "sanity": "Sanity",
+      "energy": "Energy",
+      "courage": "Courage",
+      "wisdom": "Wisdom"
+    },
+    "buttons": {
+      "exitGame": "Exit Game",
+      "restart": "Restart",
+      "speak": "Speak",
+      "mute": "Mute"
+    },
+    "labels": {
+      "narrator": "Narrator",
+      "protagonist": "Protagonist",
+      "supporting": "Supporting Character",
+      "ending": "Ending",
+      "endingReached": "You reached an ending!",
+      "continuePlayingQuestion": "Do you want to continue playing or return to the hall?"
+    }
+  }
+}

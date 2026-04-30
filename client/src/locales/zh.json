@@ -1,0 +1,152 @@
+{
+  "nav": {
+    "gameHall": "游戏大厅",
+    "archive": "存档管理",
+    "achievements": "成就",
+    "language": "语言"
+  },
+  "hero": {
+    "title": "无限剧场",
+    "subtitle": "每一个选择，都是一段新的命运。",
+    "description": "在这里，你是故事的主角，也是命运的书写者。",
+    "stats": {
+      "stories": "个故事",
+      "endings": "种结局",
+      "nodes": "个节点"
+    }
+  },
+  "games": {
+    "rainyNight": {
+      "title": "雨夜来电",
+      "description": "深夜，一通陌生来电打破了宁静。你是侦探林晓，接到了一个神秘女子的求救电话……",
+      "duration": "30-45 分钟",
+      "nodes": "35 个节点",
+      "tags": ["悬疑", "推理", "惊悚", "都市"]
+    },
+    "deepSea": {
+      "title": "深海余烬",
+      "description": "4000米深处，\"阿基里斯\"号基地突然失联。你在黑暗中醒来，周围是诡异的红色警示灯……",
+      "duration": "45-60 分钟",
+      "nodes": "40 个节点",
+      "tags": ["科幻", "生存", "恐怖", "深海"]
+    },
+    "pirateLegend": {
+      "title": "海盗传说",
+      "description": "1698年，加勒比海。你是令人闻风丧胆的\"血月女王\"罗珊，一张神秘藏宝图将你引向传说中的幽灵岛……",
+      "duration": "40-55 分钟",
+      "nodes": "37 个节点",
+      "tags": ["冒险", "海盗", "宝藏", "历史"]
+    },
+    "ancientMystery": {
+      "title": "古墓迷踪",
+      "description": "考古学家叶云霄发现了一座从未记载的古代帝王陵墓，但触碰它可能引发千年诅咒……",
+      "duration": "45-60 分钟",
+      "nodes": "25 个节点",
+      "tags": ["古风", "悬疑", "考古", "探险"]
+    },
+    "cyberDetective": {
+      "title": "赛博侦探",
+      "description": "2087年，义体改造侦探\"零\"接到了一桩不可能的案件——凶手是一个不存在的AI……",
+      "duration": "50-65 分钟",
+      "nodes": "28 个节点",
+      "tags": ["科幻", "赛博朋克", "推理", "未来"]
+    },
+    "palaceIntrigue": {
+      "title": "宫廷风云",
+      "description": "新入宫的才人沈若华，第一天就卷入了皇位之争。在刀光剑影的宫廷中，如何自保，如何守护正义？",
+      "duration": "40-55 分钟",
+      "nodes": "32 个节点",
+      "tags": ["古风", "宫廷", "权谋", "言情"]
+    },
+    "wildernesssurvival": {
+      "title": "荒野求生",
+      "description": "飞机迫降在无人区，特种兵退役的林峰必须带领幸存者在极端环境中求生……",
+      "duration": "45-60 分钟",
+      "nodes": "30 个节点",
+      "tags": ["生存", "冒险", "极限", "团队"]
+    },
+    "fantasyHealer": {
+      "title": "治愈之光",
+      "description": "拥有神秘治愈能力的少女艾拉，在王国被黑暗侵蚀之际，必须用生命之力对抗黑暗……",
+      "duration": "30-45 分钟",
+      "nodes": "35 个节点",
+      "tags": ["奇幻", "治愈", "魔法", "冒险"]
+    },
+    "spaceDiplomat": {
+      "title": "星际外交",
+      "description": "2350年，人类与外星文明首次接触。一场误会可能引发星际战争，你是唯一能阻止灾难的人……",
+      "duration": "40-55 分钟",
+      "nodes": "32 个节点",
+      "tags": ["科幻", "外交", "星际", "未来"]
+    },
+    "horrorHospital": {
+      "title": "禁区病院",
+      "description": "心理医生苏明调查一家废弃精神病院，却发现自己与这里有着无法解释的联系……",
+      "duration": "50-65 分钟",
+      "nodes": "30 个节点",
+      "tags": ["恐怖", "心理", "悬疑", "黑暗"]
+    },
+    "campusMystery": {
+      "title": "校园推理",
+      "description": "高中侦探顾晓收到神秘纸条，揭开了一场针对同学梦想的阴谋，真相比想象中更复杂……",
+      "duration": "30-45 分钟",
+      "nodes": "49 个节点",
+      "tags": ["校园", "推理", "青春", "正义"]
+    },
+    "desertKingdom": {
+      "title": "沙漠王国",
+      "description": "流亡三年的王子萨利姆决心夺回被篡位者占领的王国，但武力与智慧，哪个才是真正的答案？",
+      "duration": "40-55 分钟",
+      "nodes": "32 个节点",
+      "tags": ["奇幻", "王权", "沙漠", "冒险"]
+    }
+  },
+  "buttons": {
+    "startAdventure": "开始冒险",
+    "continueGame": "继续游戏",
+    "backToHall": "返回大厅",
+    "logout": "登出",
+    "login": "登录"
+  },
+  "unlockConditions": {
+    "complete": "完成",
+    "anyEnding": "任意结局后解锁"
+  },
+  "archive": {
+    "title": "存档管理",
+    "progress": "进度",
+    "endings": "已收集结局",
+    "noData": "暂无存档"
+  },
+  "achievements": {
+    "title": "成就",
+    "locked": "已锁定",
+    "unlocked": "已解锁"
+  },
+  "gamePlayer": {
+    "attributes": {
+      "trust": "信任",
+      "clues": "线索",
+      "pressure": "压力",
+      "health": "生命值",
+      "sanity": "理智",
+      "energy": "体力",
+      "courage": "勇气",
+      "wisdom": "智慧"
+    },
+    "buttons": {
+      "exitGame": "退出游戏",
+      "restart": "重新开始",
+      "speak": "语音",
+      "mute": "静音"
+    },
+    "labels": {
+      "narrator": "旁白",
+      "protagonist": "主角",
+      "supporting": "配角",
+      "ending": "结局",
+      "endingReached": "你触发了一个结局！",
+      "continuePlayingQuestion": "是否继续游戏或返回大厅？"
+    }
+  }
+}
