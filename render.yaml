@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     autoDeployTrigger: commit
-    healthCheckPath: /
+    healthCheckPath: /health
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start
     envVars:
