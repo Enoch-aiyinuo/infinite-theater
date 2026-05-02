@@ -126,7 +126,7 @@ const INITIAL_STATS_MAP: Record<string, Record<string, number>> = {
   'desert-kingdom': DESERT_KINGDOM_INITIAL_STATS,
 };
 
-type DeductionProfile = {
+type DeductionStageProfile = {
   scene: string;
   sceneEn: string;
   premise: string;
@@ -134,6 +134,10 @@ type DeductionProfile = {
   correct: { text: string; textEn: string };
   redHerrings: Array<{ text: string; textEn: string }>;
   cost: { text: string; textEn: string };
+};
+
+type DeductionProfile = DeductionStageProfile & {
+  followUp?: DeductionStageProfile;
 };
 
 const DEDUCTION_PROFILES: Record<string, DeductionProfile> = {
@@ -283,6 +287,19 @@ const DEDUCTION_PROFILES: Record<string, DeductionProfile> = {
   },
 };
 
+const DEFAULT_DEDUCTION_FOLLOW_UP: DeductionStageProfile = {
+  scene: '终局复核',
+  sceneEn: 'Final Review',
+  premise: '你已经排除了最明显的伪装，但还剩最后一层陷阱。真正的压力不在于你看见了什么，而在于你愿不愿意把最后一块证据摆上桌面，让所有人都没有退路。',
+  premiseEn: 'You have already ruled out the most obvious disguise, but one final trap remains. The pressure is no longer about what you saw. It is about whether you are willing to put the last piece of evidence on the table and remove every escape route.',
+  correct: { text: '按证据链顺序公开最后一块关键证据', textEn: 'Reveal the last critical clue in strict evidence-chain order' },
+  redHerrings: [
+    { text: '相信眼前最省事的说法，直接收尾', textEn: 'Trust the easiest explanation and wrap it up now' },
+    { text: '把最关键的证据先藏起来，留作后手', textEn: 'Hide the most important clue and keep it as leverage' },
+  ],
+  cost: { text: '接受一次代价，换来完整的真相闭环', textEn: 'Pay a cost to secure the full truth loop' },
+};
+
 const DEFAULT_DEDUCTION_PROFILE: DeductionProfile = {
   scene: '真相校验',
   sceneEn: 'Truth Check',
@@ -294,14 +311,15 @@ const DEFAULT_DEDUCTION_PROFILE: DeductionProfile = {
     { text: '隐藏关键证据，换取暂时安全', textEn: 'Hide the key evidence for temporary safety' },
   ],
   cost: { text: '牺牲短期优势，保留完整证据链', textEn: 'Sacrifice short-term advantage to preserve the full evidence chain' },
+  followUp: DEFAULT_DEDUCTION_FOLLOW_UP,
 };
 
 function getDeductionProfile(gameId: string) {
   return DEDUCTION_PROFILES[gameId] || DEFAULT_DEDUCTION_PROFILE;
 }
 
-function createDeductionGateId(endingNodeId: number) {
-  return 900000 + endingNodeId;
+function createDeductionGateId(endingNodeId: number, stage: number) {
+  return 900000 + endingNodeId * 10 + stage;
 }
 
 function findFallbackEnding(story: StoryNode[], originalEnding: StoryNode) {
@@ -321,6 +339,7 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
   const profile = getDeductionProfile(gameId);
   const syntheticNodes: StoryNode[] = [];
   const createdGateIds = new Set<number>();
+  const createdReviewGateIds = new Set<number>();
 
   const rewrittenStory = story.map(node => {
     if (!node.choices?.length) return node;
@@ -329,40 +348,77 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
       const endingNode = endings.get(choice.next);
       if (!endingNode || endingNode.endType === 'bad') return choice;
 
-      const gateId = createDeductionGateId(endingNode.id);
+      const gateId = createDeductionGateId(endingNode.id, 1);
+      const reviewGateId = createDeductionGateId(endingNode.id, 2);
       if (!createdGateIds.has(gateId)) {
         createdGateIds.add(gateId);
+      }
+      if (!createdReviewGateIds.has(reviewGateId)) {
+        createdReviewGateIds.add(reviewGateId);
         const fallbackEnding = findFallbackEnding(story, endingNode);
+        const stageOne = profile;
+        const stageTwo = profile.followUp || DEFAULT_DEDUCTION_FOLLOW_UP;
         const twistLabel = endingNode.endType === 'secret' ? '隐藏结局校验' : endingNode.endType === 'neutral' ? '代价校验' : '真相校验';
         const twistLabelEn = endingNode.endType === 'secret' ? 'Secret Ending Check' : endingNode.endType === 'neutral' ? 'Cost Check' : 'Truth Check';
 
         syntheticNodes.push({
           id: gateId,
-          scene: profile.scene,
-          sceneEn: profile.sceneEn,
-          text: `${profile.premise}\n\n【${twistLabel}】如果你现在选错，故事会接受一个“看似合理”的答案，但真正的因果链会断掉。`,
-          textEn: `${profile.premiseEn}\n\n[${twistLabelEn}] Choose wrong now and the story will accept a plausible answer, but the real chain of cause and effect will break.`,
+          scene: stageOne.scene,
+          sceneEn: stageOne.sceneEn,
+          text: `${stageOne.premise}\n\n【第一轮校验 / ${twistLabel}】如果你现在选错，故事会接受一个“看似合理”的答案，但真正的因果链会断掉。`,
+          textEn: `${stageOne.premiseEn}\n\n[Round 1 / ${twistLabelEn}] Choose wrong now and the story will accept a plausible answer, but the real chain of cause and effect will break.`,
           choices: [
             {
               label: 'A',
-              text: profile.correct.text,
-              textEn: profile.correct.textEn,
-              next: endingNode.id,
+              text: stageOne.correct.text,
+              textEn: stageOne.correct.textEn,
+              next: reviewGateId,
               delta: { clues: 8, wisdom: 8, trust: 3, sanity: 3, exposure: 2, danger: 2 },
             },
             {
               label: 'B',
-              text: profile.redHerrings[0]?.text || DEFAULT_DEDUCTION_PROFILE.redHerrings[0].text,
-              textEn: profile.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_PROFILE.redHerrings[0].textEn,
+              text: stageOne.redHerrings[0]?.text || DEFAULT_DEDUCTION_PROFILE.redHerrings[0].text,
+              textEn: stageOne.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_PROFILE.redHerrings[0].textEn,
               next: fallbackEnding.id,
               delta: { clues: -6, wisdom: -6, trust: -4, sanity: -4, exposure: 8, danger: 8, stress: 8 },
             },
             {
               label: 'C',
-              text: profile.cost.text,
-              textEn: profile.cost.textEn,
-              next: endingNode.id,
+              text: stageOne.cost.text,
+              textEn: stageOne.cost.textEn,
+              next: reviewGateId,
               delta: { clues: 4, wisdom: 4, trust: -2, sanity: -2, exposure: 5, danger: 5, stress: 6 },
+            },
+          ],
+        });
+
+        syntheticNodes.push({
+          id: reviewGateId,
+          scene: stageTwo.scene,
+          sceneEn: stageTwo.sceneEn,
+          text: `${stageTwo.premise}\n\n【第二轮校验】你已经逼近真相，但最后一层伪装还在。现在要决定，是把证据链完整锁死，还是让最后的空隙把你拖回误判。`,
+          textEn: `${stageTwo.premiseEn}\n\n[Round 2] You are close to the truth, but the final disguise still stands. Now you must decide whether to lock the evidence chain completely or let the last gap drag you back into a wrong answer.`,
+          choices: [
+            {
+              label: 'A',
+              text: stageTwo.correct.text,
+              textEn: stageTwo.correct.textEn,
+              next: endingNode.id,
+              delta: { clues: 10, wisdom: 10, trust: 4, sanity: 4, exposure: 3, danger: 3 },
+            },
+            {
+              label: 'B',
+              text: stageTwo.redHerrings[0]?.text || DEFAULT_DEDUCTION_FOLLOW_UP.redHerrings[0].text,
+              textEn: stageTwo.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_FOLLOW_UP.redHerrings[0].textEn,
+              next: fallbackEnding.id,
+              delta: { clues: -8, wisdom: -8, trust: -4, sanity: -4, exposure: 9, danger: 9, stress: 8 },
+            },
+            {
+              label: 'C',
+              text: stageTwo.cost.text,
+              textEn: stageTwo.cost.textEn,
+              next: endingNode.id,
+              delta: { clues: 6, wisdom: 6, trust: -3, sanity: -3, exposure: 6, danger: 6, stress: 6 },
             },
           ],
         });
