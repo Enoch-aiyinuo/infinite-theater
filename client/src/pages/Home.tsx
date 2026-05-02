@@ -2,7 +2,22 @@ import { useLocation } from 'wouter';
 import { GAMES, getDifficultyLabel, getDifficultyColor } from '@/data/games';
 import { useGameStore } from '@/hooks/useGameStore';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Lock, Play, CheckCircle, Clock, BookOpen, Star, ArrowRight, Trophy, Sparkles, ScrollText } from 'lucide-react';
+import {
+  Lock,
+  Play,
+  CheckCircle,
+  Clock,
+  BookOpen,
+  Star,
+  ArrowRight,
+  Trophy,
+  Sparkles,
+  ScrollText,
+  Ticket,
+  Clapperboard,
+  Film,
+  ChevronRight,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getGameMarketingCopy } from '@/lib/narrative';
@@ -32,6 +47,17 @@ export default function Home() {
         { icon: Trophy, label: 'Stories cleared', value: `${completedGames.length}/${GAMES.length}` },
         { icon: ScrollText, label: 'Endings found', value: `${totalCollectedEndings}/${GAMES.reduce((a, g) => a + g.endings.length, 0)}` },
       ];
+  const coverHighlights = language === 'zh'
+    ? [
+        { icon: Clapperboard, text: '开场像电影预告，不是普通菜单' },
+        { icon: Film, text: '每次进入都会突出不同的悬念点' },
+        { icon: Ticket, text: '先给你一张票，再把你带进故事' },
+      ]
+    : [
+        { icon: Clapperboard, text: 'The opening feels like a trailer, not a menu' },
+        { icon: Film, text: 'Each visit spotlights a different hook' },
+        { icon: Ticket, text: 'You get a ticket first, then the story pulls you in' },
+      ];
 
   return (
     <div className="min-h-screen">
@@ -58,7 +84,7 @@ export default function Home() {
               <div className="absolute bottom-0 left-0 h-48 w-48 bg-[radial-gradient(circle,oklch(0.55_0.18_220_/_0.14),transparent_70%)] blur-2xl" />
             </div>
 
-            <div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
               <div className="max-w-2xl">
                 <div className="mb-5 flex flex-wrap items-center gap-2 animate-fade-in">
                   <span className="font-cinzel text-primary/70 text-xs tracking-[0.32em] uppercase">
@@ -114,6 +140,23 @@ export default function Home() {
                 </div>
 
                 <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                  {coverHighlights.map(({ icon: Icon, text }) => (
+                    <div
+                      key={text}
+                      className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 backdrop-blur-sm"
+                    >
+                      <div className="mb-2 flex items-center gap-2 text-primary/78">
+                        <Icon size={14} />
+                        <span className="text-[11px] uppercase tracking-[0.18em]">
+                          {language === 'zh' ? '封面细节' : 'Cover detail'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-white/82 leading-snug">{text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
                   {momentumItems.map(({ icon: Icon, label, value }) => (
                     <div
                       key={label}
@@ -135,61 +178,95 @@ export default function Home() {
 
               <div className="animate-fade-in delay-500">
                 <div
-                  className="relative overflow-hidden rounded-[1.75rem] border"
+                  className="relative overflow-hidden rounded-[1.9rem] border"
                   style={{
                     borderColor: 'oklch(0.72 0.12 75 / 0.22)',
-                    background: 'linear-gradient(180deg, oklch(0.12 0.015 260 / 0.96), oklch(0.09 0.01 260 / 0.98))',
+                    background: 'linear-gradient(180deg, oklch(0.12 0.015 260 / 0.96), oklch(0.085 0.01 260 / 0.98))',
+                    boxShadow: '0 30px 80px oklch(0 0 0 / 0.35), inset 0 1px 0 oklch(0.72 0.12 75 / 0.08)',
                   }}
                 >
-                  <div className="relative h-64">
-                    <img
-                      src={featuredGame.coverImage}
-                      alt={featuredGame.title}
-                      className="h-full w-full object-cover brightness-[0.62] saturate-[0.92]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                    <div className="absolute left-5 top-5 rounded-full border border-primary/35 bg-black/30 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary/90 backdrop-blur-sm">
-                      {language === 'zh' ? '今晚推荐开局' : 'Tonight’s Opening'}
-                    </div>
-                    <div className="absolute inset-x-5 bottom-5">
-                      <h2 className="font-serif-sc text-3xl text-white mb-1">{featuredGame.title}</h2>
-                      <p className="font-cinzel text-xs tracking-[0.22em] text-white/55 uppercase">{featuredGame.subtitle}</p>
-                    </div>
-                  </div>
+                  <div className="relative h-[34rem]">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,oklch(0.72_0.12_75_/_0.18),transparent_28%),radial-gradient(circle_at_80%_20%,oklch(0.55_0.18_220_/_0.20),transparent_26%),linear-gradient(180deg,transparent_0%,oklch(0_0_0_/_0.26)_100%)]" />
 
-                  <div className="p-5">
-                    <p className="text-sm uppercase tracking-[0.2em] text-primary/78 mb-2">
-                      {language === 'zh' ? '为什么先玩它' : 'Why Start Here'}
-                    </p>
-                    <p className="text-base text-white/88 leading-relaxed mb-4">
-                      {featuredMarketing.hook}
-                    </p>
+                    <div className="absolute left-4 top-4 z-10 rounded-full border border-primary/35 bg-black/35 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary/90 backdrop-blur-sm">
+                      {language === 'zh' ? '今晚放映' : 'Now Showing'}
+                    </div>
 
-                    <div className="grid grid-cols-3 gap-3 mb-4">
-                      {[
-                        { value: featuredGame.estimatedTime, label: language === 'zh' ? '时长' : 'Length' },
-                        { value: `${featuredGame.totalNodes}`, label: language === 'zh' ? '节点' : 'Nodes' },
-                        { value: `${featuredCollectedEndings.length}/${featuredGame.endings.length}`, label: language === 'zh' ? '结局' : 'Endings' },
-                      ].map(item => (
-                        <div key={item.label} className="rounded-xl border border-white/8 bg-white/[0.03] px-3 py-3 text-center">
-                          <div className="text-sm font-semibold text-white/90">{item.value}</div>
-                          <div className="mt-1 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{item.label}</div>
+                    <div className="absolute right-4 top-4 z-10 rounded-full border border-white/10 bg-black/30 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-white/75 backdrop-blur-sm">
+                      {language === 'zh' ? '章节票根' : 'Story Pass'}
+                    </div>
+
+                    <div className="absolute left-4 right-4 bottom-4 z-10 rounded-[1.35rem] border border-white/10 bg-black/42 p-4 backdrop-blur-xl">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <div>
+                          <p className="text-[11px] uppercase tracking-[0.22em] text-primary/75 mb-1">
+                            {language === 'zh' ? '开局钩子' : 'Opening hook'}
+                          </p>
+                          <h2 className="font-serif-sc text-3xl text-white leading-none">
+                            {featuredGame.title}
+                          </h2>
                         </div>
-                      ))}
+                        <div className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary/90">
+                          {featuredGame.subtitle}
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-white/85 leading-relaxed mb-4">
+                        {featuredMarketing.hook}
+                      </p>
+
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {[
+                          { value: featuredGame.estimatedTime, label: language === 'zh' ? '时长' : 'Length' },
+                          { value: `${featuredGame.totalNodes}`, label: language === 'zh' ? '节点' : 'Nodes' },
+                          { value: `${featuredCollectedEndings.length}/${featuredGame.endings.length}`, label: language === 'zh' ? '结局' : 'Endings' },
+                        ].map(item => (
+                          <div key={item.label} className="rounded-xl border border-white/8 bg-white/[0.03] px-3 py-3 text-center">
+                            <div className="text-sm font-semibold text-white/90">{item.value}</div>
+                            <div className="mt-1 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{item.label}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Button
+                        className="group w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_28px_oklch(0.72_0.12_75_/_0.28)]"
+                        onClick={() => navigate(`/game/${featuredGame.id}`)}
+                      >
+                        <Play size={16} className="mr-2" />
+                        {language === 'zh' ? '直接开演' : 'Start the Show'}
+                        <ChevronRight size={15} className="ml-2 transition-transform group-hover:translate-x-0.5" />
+                      </Button>
                     </div>
 
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                      {featuredMarketing.stakes}
-                    </p>
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[82%]">
+                      <div className="relative mx-auto h-[24rem] max-w-[18rem] rounded-[1.5rem] border border-primary/25 bg-black/35 p-3 shadow-[0_24px_70px_rgba(0,0,0,0.45)]">
+                        <div className="relative h-full overflow-hidden rounded-[1.15rem]">
+                          <img
+                            src={featuredGame.coverImage}
+                            alt={featuredGame.title}
+                            className="h-full w-full object-cover brightness-[0.6] saturate-[0.96]"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/18 to-transparent" />
+                          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-primary/20 to-transparent" />
+                        </div>
+                        <div className="absolute -left-4 top-10 h-40 w-28 -rotate-12 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm" />
+                        <div className="absolute -right-4 top-16 h-44 w-28 rotate-12 rounded-2xl border border-primary/15 bg-primary/5 backdrop-blur-sm" />
+                        <div className="absolute -bottom-5 left-6 right-6 rounded-full border border-white/10 bg-black/55 px-4 py-2 text-center text-[11px] uppercase tracking-[0.22em] text-white/65 backdrop-blur-sm">
+                          {language === 'zh' ? '点击后进入分支故事' : 'Tap to enter the branching story'}
+                        </div>
+                      </div>
+                    </div>
 
-                    <Button
-                      className="w-full bg-white/5 border border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/55"
-                      variant="outline"
-                      onClick={() => navigate(`/game/${featuredGame.id}`)}
-                    >
-                      {language === 'zh' ? '立刻进入这部故事' : 'Enter This Story Now'}
-                      <ArrowRight size={15} className="ml-2" />
-                    </Button>
+                    <div className="absolute bottom-24 left-4 right-4 flex gap-2 overflow-hidden">
+                      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/10 bg-black/32 px-3 py-2 backdrop-blur-md">
+                        <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_oklch(0.72_0.12_75_/_0.7)]" />
+                        <p className="truncate text-xs text-white/72">
+                          {language === 'zh'
+                            ? '推荐先从首页开局，再回头收集隐藏结局'
+                            : 'Start from the homepage opening, then return for hidden endings'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

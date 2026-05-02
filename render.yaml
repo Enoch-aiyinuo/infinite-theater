@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: infinite-theater
+    runtime: node
+    plan: free
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
