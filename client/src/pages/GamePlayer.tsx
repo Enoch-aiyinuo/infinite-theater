@@ -138,6 +138,7 @@ type DeductionStageProfile = {
 
 type DeductionProfile = DeductionStageProfile & {
   followUp?: DeductionStageProfile;
+  final?: DeductionStageProfile;
 };
 
 const DEDUCTION_PROFILES: Record<string, DeductionProfile> = {
@@ -300,6 +301,19 @@ const DEFAULT_DEDUCTION_FOLLOW_UP: DeductionStageProfile = {
   cost: { text: '接受一次代价，换来完整的真相闭环', textEn: 'Pay a cost to secure the full truth loop' },
 };
 
+const DEFAULT_DEDUCTION_FINAL: DeductionStageProfile = {
+  scene: '终局定锚',
+  sceneEn: 'Final Anchor',
+  premise: '最后一步不是找答案，而是把所有答案按顺序钉死。现在你面对的是最危险的时刻：表面上已经可以收束，但只要漏掉一处矛盾，整条真相链都会倒塌。',
+  premiseEn: 'The last step is not finding an answer. It is locking every answer into place in the right order. This is the most dangerous moment: the case looks ready to close, but one missed contradiction will collapse the whole truth chain.',
+  correct: { text: '按时间、动机、证词三项顺序封存真相', textEn: 'Seal the truth in the order of time, motive, and testimony' },
+  redHerrings: [
+    { text: '先公布结论，再补证据', textEn: 'Publish the verdict first and patch the evidence later' },
+    { text: '把冲突点删掉，只保留顺眼版本', textEn: 'Delete the contradictions and keep only the tidy version' },
+  ],
+  cost: { text: '保留全部矛盾记录，承受最后一次反噬', textEn: 'Keep every contradiction on record and take the final backlash' },
+};
+
 const DEFAULT_DEDUCTION_PROFILE: DeductionProfile = {
   scene: '真相校验',
   sceneEn: 'Truth Check',
@@ -312,6 +326,7 @@ const DEFAULT_DEDUCTION_PROFILE: DeductionProfile = {
   ],
   cost: { text: '牺牲短期优势，保留完整证据链', textEn: 'Sacrifice short-term advantage to preserve the full evidence chain' },
   followUp: DEFAULT_DEDUCTION_FOLLOW_UP,
+  final: DEFAULT_DEDUCTION_FINAL,
 };
 
 function getDeductionProfile(gameId: string) {
@@ -340,6 +355,7 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
   const syntheticNodes: StoryNode[] = [];
   const createdGateIds = new Set<number>();
   const createdReviewGateIds = new Set<number>();
+  const createdFinalGateIds = new Set<number>();
 
   const rewrittenStory = story.map(node => {
     if (!node.choices?.length) return node;
@@ -350,14 +366,19 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
 
       const gateId = createDeductionGateId(endingNode.id, 1);
       const reviewGateId = createDeductionGateId(endingNode.id, 2);
+      const finalGateId = createDeductionGateId(endingNode.id, 3);
       if (!createdGateIds.has(gateId)) {
         createdGateIds.add(gateId);
       }
       if (!createdReviewGateIds.has(reviewGateId)) {
         createdReviewGateIds.add(reviewGateId);
+      }
+      if (!createdFinalGateIds.has(finalGateId)) {
+        createdFinalGateIds.add(finalGateId);
         const fallbackEnding = findFallbackEnding(story, endingNode);
         const stageOne = profile;
         const stageTwo = profile.followUp || DEFAULT_DEDUCTION_FOLLOW_UP;
+        const stageThree = profile.final || DEFAULT_DEDUCTION_FINAL;
         const twistLabel = endingNode.endType === 'secret' ? '隐藏结局校验' : endingNode.endType === 'neutral' ? '代价校验' : '真相校验';
         const twistLabelEn = endingNode.endType === 'secret' ? 'Secret Ending Check' : endingNode.endType === 'neutral' ? 'Cost Check' : 'Truth Check';
 
@@ -419,6 +440,37 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
               textEn: stageTwo.cost.textEn,
               next: endingNode.id,
               delta: { clues: 6, wisdom: 6, trust: -3, sanity: -3, exposure: 6, danger: 6, stress: 6 },
+            },
+          ],
+        });
+
+        syntheticNodes.push({
+          id: finalGateId,
+          scene: stageThree.scene,
+          sceneEn: stageThree.sceneEn,
+          text: `${stageThree.premise}\n\n【第三轮校验】你已经摸到了结局的门把手，但门后不只是真相，还有代价。现在必须把每一条证据摆回它该在的位置，不能再用“差不多”蒙混过去。`,
+          textEn: `${stageThree.premiseEn}\n\n[Round 3] Your hand is already on the door to the ending, but beyond it is not only the truth, but also the cost. Now you must put every clue back where it belongs. “Close enough” is no longer good enough.`,
+          choices: [
+            {
+              label: 'A',
+              text: stageThree.correct.text,
+              textEn: stageThree.correct.textEn,
+              next: endingNode.id,
+              delta: { clues: 12, wisdom: 12, trust: 5, sanity: 5, exposure: 4, danger: 4 },
+            },
+            {
+              label: 'B',
+              text: stageThree.redHerrings[0]?.text || DEFAULT_DEDUCTION_FINAL.redHerrings[0].text,
+              textEn: stageThree.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_FINAL.redHerrings[0].textEn,
+              next: fallbackEnding.id,
+              delta: { clues: -10, wisdom: -10, trust: -5, sanity: -5, exposure: 10, danger: 10, stress: 10 },
+            },
+            {
+              label: 'C',
+              text: stageThree.cost.text,
+              textEn: stageThree.cost.textEn,
+              next: endingNode.id,
+              delta: { clues: 8, wisdom: 8, trust: -4, sanity: -4, exposure: 7, danger: 7, stress: 8 },
             },
           ],
         });
