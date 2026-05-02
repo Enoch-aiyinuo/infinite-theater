@@ -58,14 +58,23 @@ export default function Home() {
         { icon: Film, text: 'Each visit spotlights a different hook' },
         { icon: Ticket, text: 'You get a ticket first, then the story pulls you in' },
       ];
+  const heroColors = [
+    'oklch(0.72 0.12 75)',
+    'oklch(0.60 0.16 214)',
+    'oklch(0.58 0.18 292)',
+    'oklch(0.62 0.18 25)',
+  ];
+  const tint = (color: string, alpha: number) =>
+    color.startsWith('oklch(') ? color.replace(/\)$/, ` / ${alpha})`) : color;
 
   return (
     <div className="min-h-screen">
       <section className="relative overflow-hidden px-4 pt-8 pb-12 md:px-6 md:pt-12 md:pb-16">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-x-[8%] top-10 h-[440px] rounded-[3rem] bg-[radial-gradient(circle_at_top,oklch(0.72_0.12_75_/_0.14),transparent_58%)]" />
-          <div className="absolute -top-24 left-[6%] h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute right-[8%] top-24 h-80 w-80 rounded-full bg-[oklch(0.55_0.18_220_/_0.16)] blur-3xl" />
+          <div className="absolute inset-x-[8%] top-10 h-[440px] rounded-[3rem] bg-[radial-gradient(circle_at_top,oklch(0.72_0.12_75_/_0.18),transparent_56%)]" />
+          <div className="absolute -top-24 left-[6%] h-72 w-72 rounded-full bg-[oklch(0.72_0.12_75_/_0.16)] blur-3xl" />
+          <div className="absolute right-[8%] top-24 h-80 w-80 rounded-full bg-[oklch(0.60_0.16_214_/_0.18)] blur-3xl" />
+          <div className="absolute left-[42%] top-8 h-64 w-64 rounded-full bg-[oklch(0.58_0.18_292_/_0.14)] blur-3xl" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
         </div>
 
@@ -74,14 +83,15 @@ export default function Home() {
             className="relative overflow-hidden rounded-[2rem] border px-6 py-8 md:px-10 md:py-12"
             style={{
               borderColor: 'oklch(0.72 0.12 75 / 0.18)',
-              background: 'linear-gradient(145deg, oklch(0.10 0.015 260 / 0.98), oklch(0.08 0.01 260 / 0.94))',
-              boxShadow: '0 32px 90px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(0.72 0.12 75 / 0.08)',
+              background: 'linear-gradient(145deg, oklch(0.10 0.018 260 / 0.98), oklch(0.08 0.015 260 / 0.94))',
+              boxShadow: '0 32px 90px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(0.72 0.12 75 / 0.08), inset 0 0 0 1px oklch(0.60 0.16 214 / 0.06)',
             }}
           >
             <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-primary/75 to-transparent" />
+              <div className="absolute inset-x-8 top-0 h-1.5 rounded-full bg-gradient-to-r from-amber-300 via-sky-400 via-fuchsia-400 to-amber-300" />
               <div className="absolute right-0 top-0 h-64 w-64 bg-[radial-gradient(circle,oklch(0.72_0.12_75_/_0.16),transparent_70%)] blur-2xl" />
-              <div className="absolute bottom-0 left-0 h-48 w-48 bg-[radial-gradient(circle,oklch(0.55_0.18_220_/_0.14),transparent_70%)] blur-2xl" />
+              <div className="absolute bottom-0 left-0 h-48 w-48 bg-[radial-gradient(circle,oklch(0.55_0.18_220_/_0.16),transparent_70%)] blur-2xl" />
+              <div className="absolute bottom-6 right-14 h-40 w-40 bg-[radial-gradient(circle,oklch(0.58_0.18_292_/_0.12),transparent_70%)] blur-2xl" />
             </div>
 
             <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
@@ -93,7 +103,12 @@ export default function Home() {
                   {heroCallouts.map(item => (
                     <span
                       key={item}
-                      className="rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-[11px] tracking-[0.16em] text-primary/85 uppercase"
+                      className="rounded-full border px-3 py-1 text-[11px] tracking-[0.16em] uppercase"
+                      style={{
+                        borderColor: tint(heroColors[heroCallouts.indexOf(item) % heroColors.length], 0.24),
+                        color: heroColors[heroCallouts.indexOf(item) % heroColors.length],
+                        background: `linear-gradient(90deg, ${tint(heroColors[heroCallouts.indexOf(item) % heroColors.length], 0.18)}, transparent)`,
+                      }}
                     >
                       {item}
                     </span>
@@ -122,7 +137,7 @@ export default function Home() {
 
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row animate-fade-in delay-400">
                   <Button
-                    className="group min-w-[220px] bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_28px_oklch(0.72_0.12_75_/_0.28)]"
+                    className="group min-w-[220px] border-0 bg-gradient-to-r from-amber-300 via-sky-400 to-fuchsia-500 text-slate-950 hover:from-amber-200 hover:via-sky-300 hover:to-fuchsia-400 shadow-[0_0_28px_oklch(0.72_0.12_75_/_0.22),0_0_36px_oklch(0.60_0.16_214_/_0.18)]"
                     onClick={() => navigate(`/game/${featuredGame.id}`)}
                   >
                     <Play size={16} className="mr-2" />
@@ -131,7 +146,7 @@ export default function Home() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-primary/25 bg-white/3 text-white/88 hover:bg-white/6 hover:border-primary/45"
+                    className="border-primary/25 bg-white/3 text-white/88 hover:bg-sky-400/10 hover:border-sky-300/45"
                     onClick={() => navigate('/archive')}
                   >
                     <BookOpen size={15} className="mr-2" />
@@ -143,15 +158,20 @@ export default function Home() {
                   {coverHighlights.map(({ icon: Icon, text }) => (
                     <div
                       key={text}
-                      className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 backdrop-blur-sm"
+                      className="rounded-2xl border px-4 py-3 backdrop-blur-sm"
+                      style={{
+                        borderColor: 'oklch(0.72 0.12 75 / 0.14)',
+                        background: 'linear-gradient(135deg, oklch(0.11 0.018 260 / 0.92), oklch(0.09 0.015 260 / 0.84))',
+                        boxShadow: 'inset 0 1px 0 oklch(0.72 0.12 75 / 0.08)',
+                      }}
                     >
                       <div className="mb-2 flex items-center gap-2 text-primary/78">
                         <Icon size={14} />
-                        <span className="text-[11px] uppercase tracking-[0.18em]">
+                        <span className="text-[11px] uppercase tracking-[0.18em] text-sky-200/80">
                           {language === 'zh' ? '封面细节' : 'Cover detail'}
                         </span>
                       </div>
-                      <p className="text-sm text-white/82 leading-snug">{text}</p>
+                      <p className="text-sm text-white/86 leading-snug">{text}</p>
                     </div>
                   ))}
                 </div>
@@ -162,8 +182,9 @@ export default function Home() {
                       key={label}
                       className="rounded-2xl border px-4 py-3"
                       style={{
-                        borderColor: 'oklch(0.72 0.12 75 / 0.16)',
-                        background: 'linear-gradient(180deg, oklch(0.13 0.015 260 / 0.88), oklch(0.10 0.012 260 / 0.9))',
+                        borderColor: 'oklch(0.72 0.12 75 / 0.18)',
+                        background: 'linear-gradient(180deg, oklch(0.13 0.018 260 / 0.94), oklch(0.10 0.015 260 / 0.95))',
+                        boxShadow: 'inset 0 1px 0 oklch(0.72 0.12 75 / 0.06)',
                       }}
                     >
                       <div className="mb-2 flex items-center gap-2 text-primary/78">
@@ -180,13 +201,13 @@ export default function Home() {
                 <div
                   className="relative overflow-hidden rounded-[1.9rem] border"
                   style={{
-                    borderColor: 'oklch(0.72 0.12 75 / 0.22)',
-                    background: 'linear-gradient(180deg, oklch(0.12 0.015 260 / 0.96), oklch(0.085 0.01 260 / 0.98))',
-                    boxShadow: '0 30px 80px oklch(0 0 0 / 0.35), inset 0 1px 0 oklch(0.72 0.12 75 / 0.08)',
+                    borderColor: 'oklch(0.72 0.12 75 / 0.24)',
+                    background: 'linear-gradient(180deg, oklch(0.12 0.018 260 / 0.96), oklch(0.085 0.012 260 / 0.98))',
+                    boxShadow: '0 30px 80px oklch(0 0 0 / 0.35), inset 0 1px 0 oklch(0.72 0.12 75 / 0.08), 0 0 0 1px oklch(0.60 0.16 214 / 0.06)',
                   }}
                 >
                   <div className="relative h-[34rem]">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,oklch(0.72_0.12_75_/_0.18),transparent_28%),radial-gradient(circle_at_80%_20%,oklch(0.55_0.18_220_/_0.20),transparent_26%),linear-gradient(180deg,transparent_0%,oklch(0_0_0_/_0.26)_100%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,oklch(0.72_0.12_75_/_0.18),transparent_28%),radial-gradient(circle_at_80%_20%,oklch(0.60_0.16_214_/_0.22),transparent_24%),radial-gradient(circle_at_55%_72%,oklch(0.58_0.18_292_/_0.16),transparent_22%),linear-gradient(180deg,transparent_0%,oklch(0_0_0_/_0.26)_100%)]" />
 
                     <div className="absolute left-4 top-4 z-10 rounded-full border border-primary/35 bg-black/35 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-primary/90 backdrop-blur-sm">
                       {language === 'zh' ? '今晚放映' : 'Now Showing'}
@@ -229,7 +250,7 @@ export default function Home() {
                       </div>
 
                       <Button
-                        className="group w-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_28px_oklch(0.72_0.12_75_/_0.28)]"
+                        className="group w-full border-0 bg-gradient-to-r from-amber-300 via-sky-400 to-fuchsia-500 text-slate-950 hover:from-amber-200 hover:via-sky-300 hover:to-fuchsia-400 shadow-[0_0_28px_oklch(0.72_0.12_75_/_0.22),0_0_36px_oklch(0.60_0.16_214_/_0.18)]"
                         onClick={() => navigate(`/game/${featuredGame.id}`)}
                       >
                         <Play size={16} className="mr-2" />
@@ -259,7 +280,7 @@ export default function Home() {
 
                     <div className="absolute bottom-24 left-4 right-4 flex gap-2 overflow-hidden">
                       <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-white/10 bg-black/32 px-3 py-2 backdrop-blur-md">
-                        <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_oklch(0.72_0.12_75_/_0.7)]" />
+                        <div className="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_oklch(0.60_0.16_214_/_0.75)]" />
                         <p className="truncate text-xs text-white/72">
                           {language === 'zh'
                             ? '推荐先从首页开局，再回头收集隐藏结局'
@@ -367,8 +388,8 @@ export default function Home() {
                 className={`group relative rounded-xl border overflow-hidden card-hover cursor-pointer animate-fade-in-up`}
                 style={{
                   animationDelay: `${index * 0.15}s`,
-                  borderColor: unlocked ? 'oklch(0.22 0.02 260)' : 'oklch(0.16 0.02 260)',
-                  background: 'oklch(0.11 0.015 260)',
+                  borderColor: unlocked ? tint(game.genreColor, 0.34) : 'oklch(0.16 0.02 260)',
+                  background: `linear-gradient(180deg, oklch(0.11 0.018 260), oklch(0.09 0.015 260)), radial-gradient(circle at top left, ${tint(game.genreColor, 0.12)}, transparent 42%)`,
                 }}
                 onClick={() => unlocked && navigate(`/game/${game.id}`)}
               >
@@ -383,7 +404,14 @@ export default function Home() {
                   />
 
                   {/* 渐变遮罩 */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/18 to-transparent" />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `radial-gradient(circle at 18% 18%, ${tint(game.genreColor, 0.14)}, transparent 45%), linear-gradient(to top, oklch(0.11 0.018 260 / 0.95), transparent)`,
+                    }}
+                  />
+                  <div className="absolute inset-x-0 top-0 h-1.5" style={{ background: game.genreColor }} />
 
                   {/* 锁定遮罩 */}
                   {!unlocked && (
@@ -409,7 +437,7 @@ export default function Home() {
                   {unlocked && (
                     <div
                       className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-medium text-white/90 backdrop-blur-sm"
-                      style={{ background: `${game.genreColor}40`, border: `1px solid ${game.genreColor}60` }}
+                      style={{ background: `linear-gradient(90deg, ${tint(game.genreColor, 0.28)}, oklch(0.08 0.01 260 / 0.55))`, border: `1px solid ${tint(game.genreColor, 0.4)}` }}
                     >
                       {game.genre}
                     </div>
@@ -417,7 +445,7 @@ export default function Home() {
 
                   {unlocked && (
                     <div className="absolute left-4 right-4 bottom-4">
-                      <div className="rounded-xl border border-white/10 bg-black/35 backdrop-blur-md px-3 py-2">
+                      <div className="rounded-xl border border-white/10 bg-black/35 backdrop-blur-md px-3 py-2" style={{ boxShadow: `inset 0 1px 0 ${tint(game.genreColor, 0.14)}` }}>
                         <p className="text-[11px] uppercase tracking-[0.25em] text-primary/75 mb-1">
                           {language === 'zh' ? '悬念钩子' : 'Hook'}
                         </p>
@@ -501,6 +529,7 @@ export default function Home() {
                           style={{
                             width: `${endingPercent}%`,
                             background: game.genreColor,
+                            boxShadow: `0 0 14px ${tint(game.genreColor, 0.7)}`,
                           }}
                         />
                       </div>
@@ -530,7 +559,11 @@ export default function Home() {
                   {/* 操作按钮 */}
                   {unlocked ? (
                     <Button
-                      className="w-full bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 hover:border-primary/50 transition-all"
+                      className="w-full border transition-all text-slate-950 hover:opacity-95"
+                      style={{
+                        borderColor: tint(game.genreColor, 0.4),
+                        background: `linear-gradient(90deg, ${tint(game.genreColor, 0.34)}, oklch(0.72 0.12 75 / 0.88))`,
+                      }}
                       variant="outline"
                       onClick={(e) => {
                         e.stopPropagation();

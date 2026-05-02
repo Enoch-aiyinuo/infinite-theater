@@ -45,47 +45,47 @@
 :root {
   /* 暗金主题色板 */
   --radius: 0.5rem;
-  --background: oklch(0.08 0.01 260);
-  --foreground: oklch(0.92 0.02 80);
-  --card: oklch(0.11 0.015 260);
-  --card-foreground: oklch(0.92 0.02 80);
-  --popover: oklch(0.10 0.015 260);
-  --popover-foreground: oklch(0.92 0.02 80);
+  --background: oklch(0.07 0.015 260);
+  --foreground: oklch(0.95 0.02 88);
+  --card: oklch(0.11 0.018 260);
+  --card-foreground: oklch(0.95 0.02 88);
+  --popover: oklch(0.10 0.018 260);
+  --popover-foreground: oklch(0.95 0.02 88);
   --primary: oklch(0.72 0.12 75);
   --primary-foreground: oklch(0.08 0.01 260);
-  --secondary: oklch(0.16 0.02 260);
-  --secondary-foreground: oklch(0.80 0.02 80);
-  --muted: oklch(0.14 0.015 260);
-  --muted-foreground: oklch(0.55 0.02 80);
-  --accent: oklch(0.72 0.12 75);
+  --secondary: oklch(0.17 0.03 252);
+  --secondary-foreground: oklch(0.86 0.02 88);
+  --muted: oklch(0.14 0.02 260);
+  --muted-foreground: oklch(0.60 0.02 82);
+  --accent: oklch(0.66 0.16 232);
   --accent-foreground: oklch(0.08 0.01 260);
   --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.95 0.01 80);
-  --border: oklch(0.22 0.02 260);
-  --input: oklch(0.16 0.02 260);
+  --destructive-foreground: oklch(0.97 0.01 88);
+  --border: oklch(0.22 0.03 252);
+  --input: oklch(0.17 0.03 252);
   --ring: oklch(0.72 0.12 75);
-  --sidebar: oklch(0.10 0.015 260);
-  --sidebar-foreground: oklch(0.92 0.02 80);
+  --sidebar: oklch(0.09 0.018 260);
+  --sidebar-foreground: oklch(0.95 0.02 88);
   --sidebar-primary: oklch(0.72 0.12 75);
   --sidebar-primary-foreground: oklch(0.08 0.01 260);
-  --sidebar-accent: oklch(0.16 0.02 260);
-  --sidebar-accent-foreground: oklch(0.80 0.02 80);
-  --sidebar-border: oklch(0.22 0.02 260);
+  --sidebar-accent: oklch(0.17 0.03 252);
+  --sidebar-accent-foreground: oklch(0.86 0.02 88);
+  --sidebar-border: oklch(0.22 0.03 252);
   --sidebar-ring: oklch(0.72 0.12 75);
-  --chart-1: oklch(0.72 0.12 75);
-  --chart-2: oklch(0.60 0.15 145);
-  --chart-3: oklch(0.55 0.18 220);
-  --chart-4: oklch(0.55 0.18 290);
-  --chart-5: oklch(0.55 0.22 25);
+  --chart-1: oklch(0.76 0.12 72);
+  --chart-2: oklch(0.60 0.16 202);
+  --chart-3: oklch(0.60 0.17 290);
+  --chart-4: oklch(0.62 0.18 25);
+  --chart-5: oklch(0.62 0.18 145);
   /* 自定义游戏平台变量 */
   --gold: oklch(0.72 0.12 75);
-  --gold-light: oklch(0.82 0.10 80);
+  --gold-light: oklch(0.84 0.10 82);
   --gold-dark: oklch(0.55 0.10 70);
-  --deep-bg: oklch(0.06 0.01 260);
-  --genre-suspense: oklch(0.55 0.18 290);
-  --genre-scifi: oklch(0.55 0.18 220);
-  --genre-horror: oklch(0.50 0.20 25);
-  --genre-romance: oklch(0.60 0.18 350);
+  --deep-bg: oklch(0.05 0.015 260);
+  --genre-suspense: oklch(0.58 0.18 292);
+  --genre-scifi: oklch(0.58 0.18 214);
+  --genre-horror: oklch(0.56 0.22 28);
+  --genre-romance: oklch(0.62 0.18 345);
 }
 
 /* 本主题固定为深色，无需 .dark 覆盖 */
@@ -98,6 +98,12 @@
     @apply bg-background text-foreground;
     font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
     -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 18% 0%, oklch(0.72 0.12 75 / 0.18), transparent 30%),
+      radial-gradient(circle at 82% 12%, oklch(0.60 0.18 214 / 0.16), transparent 28%),
+      radial-gradient(circle at 50% 118%, oklch(0.58 0.18 292 / 0.12), transparent 32%),
+      linear-gradient(180deg, oklch(0.08 0.015 260), oklch(0.05 0.012 260));
+    background-attachment: fixed;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -158,7 +164,7 @@
 
 /* 金色渐变文字 */
 .text-gold-gradient {
-  background: linear-gradient(135deg, oklch(0.82 0.10 80), oklch(0.72 0.12 75), oklch(0.55 0.10 70));
+  background: linear-gradient(135deg, oklch(0.86 0.08 60), oklch(0.82 0.10 80), oklch(0.72 0.12 75), oklch(0.60 0.16 214), oklch(0.58 0.18 292));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -175,14 +181,18 @@
 }
 .card-hover:hover {
   transform: translateY(-6px);
-  box-shadow: 0 24px 48px oklch(0 0 0 / 0.5), 0 0 30px oklch(0.72 0.12 75 / 0.15);
+  box-shadow:
+    0 24px 48px oklch(0 0 0 / 0.5),
+    0 0 28px oklch(0.72 0.12 75 / 0.18),
+    0 0 38px oklch(0.60 0.16 214 / 0.12),
+    0 0 42px oklch(0.58 0.18 292 / 0.10);
   border-color: oklch(0.72 0.12 75 / 0.5) !important;
 }
 
 /* 装饰性分割线 */
 .divider-gold {
   height: 1px;
-  background: linear-gradient(90deg, transparent, oklch(0.72 0.12 75), transparent);
+  background: linear-gradient(90deg, transparent, oklch(0.72 0.12 75), oklch(0.60 0.16 214), oklch(0.58 0.18 292), transparent);
 }
 
 /* 自定义滚动条 */
