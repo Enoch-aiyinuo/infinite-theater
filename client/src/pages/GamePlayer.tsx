@@ -706,10 +706,10 @@ const STORY_SOUND_PROFILES: Record<string, StorySoundProfile> = {
   'desert-kingdom': { droneType: 'sawtooth', droneFreq: 51, undertoneFreq: 20, eerieType: 'square', eerieFreq: 137, eerieLfoFreq: 0.057, shadowFreqOffset: 19, shadowDetune: -35, shadowGainScale: 0.19, rumbleFreq: 15, rumbleGainScale: 0.3, pulseFreq: 70, pulseLfoFreq: 0.035, noiseFilterType: 'bandpass', noiseFrequency: 430, noiseGain: 0.048, tensionGainBase: 0.26, undertoneGainScale: 0.88, eerieGainScale: 0.27, pulseGainScale: 0.58, pulseAttack: 0.78, pulseRelease: 4.5 },
 };
 
-const AMBIENT_MASTER_GAIN = 2.65;
-const AMBIENT_TENSION_BOOST = 1.75;
-const AMBIENT_NOISE_BOOST = 2.25;
-const AMBIENT_DREAD_LAYER_GAIN = 0.38;
+const AMBIENT_MASTER_GAIN = 1.1;
+const AMBIENT_TENSION_BOOST = 1.12;
+const AMBIENT_NOISE_BOOST = 1.1;
+const AMBIENT_DREAD_LAYER_GAIN = 0.2;
 
 function clamp(val: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, val));
@@ -1408,14 +1408,14 @@ export default function GamePlayer() {
       const autoNarratorVoiceName = role === 'narrator' ? getPreferredNarratorVoiceName(voices, language) : '';
       const preferredVoiceForRole =
         role === 'narrator'
-          ? roleSettings.preferredVoiceName || autoNarratorVoiceName
+          ? autoNarratorVoiceName
           : roleSettings.preferredVoiceName || preferredVoiceName;
-      const manuallySelectedVoice = preferSelectedVoice
-        ? voices.find(voice => voice.name === preferredVoiceForRole)
-        : undefined;
+      const manuallySelectedVoice = role === 'narrator'
+        ? undefined
+        : (preferSelectedVoice ? voices.find(voice => voice.name === preferredVoiceForRole) : undefined);
       const selectedVoice =
         role === 'narrator'
-          ? manuallySelectedVoice || voices.find(voice => voice.name === autoNarratorVoiceName) || pickNarrationVoice(voices, language, id, resolvedSpeaker, segmentText)
+          ? voices.find(voice => voice.name === autoNarratorVoiceName) || pickNarrationVoice(voices, language, id, resolvedSpeaker, segmentText)
           : manuallySelectedVoice || pickNarrationVoice(voices, language, id, resolvedSpeaker, segmentText);
       if (!firstSelectedVoiceName && selectedVoice?.name) {
         firstSelectedVoiceName = selectedVoice.name;
@@ -1425,9 +1425,11 @@ export default function GamePlayer() {
       const rawChunks = splitNarrationIntoChunks(segmentText)
         .map(chunk => (typeof chunk === 'string' ? chunk.trim() : ''))
         .filter(Boolean);
-      const chunks = (rawChunks.length > 0 ? rawChunks : [segmentText])
+      const chunks = (role === 'narrator' && segmentText.length < 320
+        ? [segmentText]
+        : (rawChunks.length > 0 ? rawChunks : [segmentText]))
         .filter(Boolean)
-        .slice(0, pacing.maxChunks);
+        .slice(0, role === 'narrator' ? Math.min(3, pacing.maxChunks) : pacing.maxChunks);
 
       return chunks.map(chunk => {
         const emotionCandidate = getSpeechEmotion(chunk);
@@ -1460,12 +1462,12 @@ export default function GamePlayer() {
       nextUtter.onstart = event => {
         previousOnStart?.call(nextUtter, event);
       };
-      nextUtter.onend = () => {
-        speechTimerRef.current = setTimeout(playNext, 40);
-      };
-      nextUtter.onerror = () => {
-        speechTimerRef.current = setTimeout(playNext, 40);
-      };
+        nextUtter.onend = () => {
+          speechTimerRef.current = setTimeout(playNext, 90);
+        };
+        nextUtter.onerror = () => {
+          speechTimerRef.current = setTimeout(playNext, 90);
+        };
       speechRef.current = nextUtter;
       window.speechSynthesis.resume();
       window.speechSynthesis.speak(nextUtter);

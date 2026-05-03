@@ -270,7 +270,7 @@ function getRoleScopedVoices(voices: SpeechSynthesisVoice[], role: VoiceRole, la
     const femaleVoices = candidates.filter(isLikelyFemaleVoice);
     if (femaleVoices.length > 0) return femaleVoices;
     const naturalNonMaleVoices = candidates.filter(voice => !isLikelyMaleVoice(voice) && !NOVELTY_VOICE_NAME_PATTERN.test(voice.name.toLowerCase()));
-    if (role === 'narrator' && naturalNonMaleVoices.length > 0) return naturalNonMaleVoices;
+    if (naturalNonMaleVoices.length > 0) return naturalNonMaleVoices;
   }
 
   if (role === 'male') {
@@ -284,6 +284,7 @@ function getRoleScopedVoices(voices: SpeechSynthesisVoice[], role: VoiceRole, la
 export function getPreferredNarratorVoiceName(voices: SpeechSynthesisVoice[], language: Language) {
   const candidates = getRoleScopedVoices(voices, 'narrator', language);
   return candidates
+    .filter(voice => isLikelyFemaleVoice(voice) || !isLikelyMaleVoice(voice))
     .map(voice => ({
       voice,
       score:
