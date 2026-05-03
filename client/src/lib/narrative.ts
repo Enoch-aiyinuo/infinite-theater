@@ -622,8 +622,8 @@ export function getVoiceStylePreset(label: VoiceStylePreset | string | undefined
     humanFemale: {
       label: language === 'en' ? 'Natural Female' : '真人女声',
       description: language === 'en' ? 'A more realistic female narrator voice with less synthetic pitch shaping.' : '更像真人讲故事的女性旁白，减少机械感和夸张变调。',
-      rate: 1.04,
-      pitch: 1.01,
+      rate: language === 'en' ? 1.08 : 1.04,
+      pitch: language === 'en' ? 0.98 : 1.01,
       volume: 1,
     },
     cold: {
