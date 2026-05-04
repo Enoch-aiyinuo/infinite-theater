@@ -1401,7 +1401,7 @@ export default function GamePlayer() {
       const resolvedSpeaker = segment.speaker;
       const role = detectVoiceRole(id, resolvedSpeaker, segmentText);
       const profile = role === 'narrator'
-        ? { pitch: 1.02, rate: 1.02, volume: 1 }
+        ? { pitch: 1, rate: 0.96, volume: 0.98 }
         : (resolvedSpeaker && profiles[resolvedSpeaker]) || profiles['narrator'] || { pitch: 0.95, rate: 0.92, volume: 0.92 };
       const roleSettings = getSafeRoleSettings(role);
       const rolePreset = getVoiceStylePreset(roleSettings.voiceStyle, language);
@@ -1410,12 +1410,12 @@ export default function GamePlayer() {
         role === 'narrator'
           ? autoNarratorVoiceName
           : roleSettings.preferredVoiceName || preferredVoiceName;
-      const manuallySelectedVoice = role === 'narrator'
-        ? undefined
-        : (preferSelectedVoice ? voices.find(voice => voice.name === preferredVoiceForRole) : undefined);
+      const manuallySelectedVoice = preferSelectedVoice
+        ? voices.find(voice => voice.name === preferredVoiceForRole)
+        : undefined;
       const selectedVoice =
         role === 'narrator'
-          ? voices.find(voice => voice.name === autoNarratorVoiceName) || pickNarrationVoice(voices, language, id, resolvedSpeaker, segmentText)
+          ? manuallySelectedVoice || voices.find(voice => voice.name === autoNarratorVoiceName) || pickNarrationVoice(voices, language, id, resolvedSpeaker, segmentText)
           : manuallySelectedVoice || pickNarrationVoice(voices, language, id, resolvedSpeaker, segmentText);
       if (!firstSelectedVoiceName && selectedVoice?.name) {
         firstSelectedVoiceName = selectedVoice.name;
@@ -1437,22 +1437,14 @@ export default function GamePlayer() {
           emotionCandidate && typeof emotionCandidate === 'object'
             ? emotionCandidate
             : { rate: 1, pitch: 1, volume: 1 };
-        const narrationEmotion =
-          role === 'narrator'
-            ? {
-                rate: Math.max(emotion.rate, language === 'en' ? 1.03 : 0.99),
-                pitch: Math.max(emotion.pitch, language === 'en' ? 0.98 : 1),
-                volume: Math.max(emotion.volume, 0.99),
-              }
-            : emotion;
         const utter = new SpeechSynthesisUtterance(chunk);
         utter.lang = language === 'en' ? 'en-US' : 'zh-CN';
-        const rawPitch = profile.pitch * voicePreset.pitch * voicePitchAdjust * rolePreset.pitch * roleSettings.pitchAdjust * narrationEmotion.pitch;
-        const rawRate = profile.rate * voicePreset.rate * voiceRateAdjust * rolePreset.rate * roleSettings.rateAdjust * narrationEmotion.rate;
-        const rawVolume = profile.volume * voicePreset.volume * voiceVolumeAdjust * rolePreset.volume * roleSettings.volumeAdjust * narrationEmotion.volume;
-        utter.pitch = role === 'narrator' ? Math.min(1.16, Math.max(language === 'en' ? 0.96 : 1.02, rawPitch)) : Math.min(1.32, rawPitch);
-        utter.rate = role === 'narrator' ? Math.min(1.12, Math.max(language === 'en' ? 1.04 : 1.02, rawRate)) : Math.min(1.08, rawRate);
-        utter.volume = role === 'narrator' ? Math.min(1, Math.max(0.99, rawVolume)) : Math.min(1, rawVolume);
+        const rawPitch = profile.pitch * voicePreset.pitch * voicePitchAdjust * rolePreset.pitch * roleSettings.pitchAdjust * emotion.pitch;
+        const rawRate = profile.rate * voicePreset.rate * voiceRateAdjust * rolePreset.rate * roleSettings.rateAdjust * emotion.rate;
+        const rawVolume = profile.volume * voicePreset.volume * voiceVolumeAdjust * rolePreset.volume * roleSettings.volumeAdjust * emotion.volume;
+        utter.pitch = role === 'narrator' ? Math.min(1.32, Math.max(1.02, rawPitch)) : Math.min(1.32, rawPitch);
+        utter.rate = role === 'narrator' ? Math.min(1.08, Math.max(1.02, rawRate)) : Math.min(1.08, rawRate);
+        utter.volume = role === 'narrator' ? Math.min(1, Math.max(0.98, rawVolume)) : Math.min(1, rawVolume);
         if (selectedVoice) utter.voice = selectedVoice;
         utteranceIndex += 1;
         const currentIndex = utteranceIndex;

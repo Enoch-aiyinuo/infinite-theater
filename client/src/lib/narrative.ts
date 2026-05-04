@@ -622,9 +622,9 @@ export function getVoiceStylePreset(label: VoiceStylePreset | string | undefined
     humanFemale: {
       label: language === 'en' ? 'Natural Female' : '真人女声',
       description: language === 'en' ? 'A more realistic female narrator voice with less synthetic pitch shaping.' : '更像真人讲故事的女性旁白，减少机械感和夸张变调。',
-      rate: language === 'en' ? 1.08 : 1.04,
-      pitch: language === 'en' ? 0.98 : 1.01,
-      volume: 1,
+      rate: 1,
+      pitch: 1,
+      volume: 0.99,
     },
     cold: {
       label: language === 'en' ? 'Icy Female' : '冰冷女声',
@@ -668,7 +668,7 @@ export type RoleVoiceSettings = {
 
 export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partial<RoleVoiceSettings>> {
   const base: Record<VoiceRole, Partial<RoleVoiceSettings>> = {
-    narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+    narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     female: { voiceStyle: 'warm' },
     male: { voiceStyle: 'cold' },
     robot: { voiceStyle: 'cold' },
@@ -678,7 +678,7 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
 
   const presets: Record<string, Partial<Record<VoiceRole, Partial<RoleVoiceSettings>>>> = {
     'rainy-night': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
       female: { voiceStyle: 'tense', rateAdjust: 1.02, pitchAdjust: 1.08 },
       male: { voiceStyle: 'cold', rateAdjust: 0.96, pitchAdjust: 0.94 },
       robot: {},
@@ -686,7 +686,7 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
       neutral: { voiceStyle: 'cold' },
     },
     'deep-sea': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
       female: { voiceStyle: 'warm', rateAdjust: 0.98, pitchAdjust: 1.03 },
       male: { voiceStyle: 'cold', rateAdjust: 0.94, pitchAdjust: 0.92 },
       robot: { voiceStyle: 'cold', rateAdjust: 0.9, pitchAdjust: 1.1, volumeAdjust: 0.9 },
@@ -694,7 +694,7 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
       neutral: { voiceStyle: 'cinematic', rateAdjust: 0.95 },
     },
     'cyber-detective': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
       female: { voiceStyle: 'cold', rateAdjust: 1.01, pitchAdjust: 1.02 },
       male: { voiceStyle: 'cold', rateAdjust: 0.98, pitchAdjust: 0.94 },
       robot: { voiceStyle: 'cold', rateAdjust: 0.92, pitchAdjust: 1.14, volumeAdjust: 0.88 },
@@ -702,7 +702,7 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
       neutral: { voiceStyle: 'cold' },
     },
     'fantasy-healer': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
       female: { voiceStyle: 'warm', rateAdjust: 1.02, pitchAdjust: 1.08 },
       male: { voiceStyle: 'cinematic', rateAdjust: 0.97, pitchAdjust: 0.95 },
       robot: { voiceStyle: 'cold' },
@@ -710,7 +710,7 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
       neutral: { voiceStyle: 'warm' },
     },
     'horror-hospital': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
       female: { voiceStyle: 'tense', rateAdjust: 1.01, pitchAdjust: 1.05 },
       male: { voiceStyle: 'cold', rateAdjust: 0.95, pitchAdjust: 0.92 },
       robot: { voiceStyle: 'cold', pitchAdjust: 1.12 },
@@ -718,7 +718,7 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
       neutral: { voiceStyle: 'cold' },
     },
     'space-diplomat': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
       female: { voiceStyle: 'warm' },
       male: { voiceStyle: 'cinematic' },
       robot: { voiceStyle: 'cold', rateAdjust: 0.93, pitchAdjust: 1.12 },
@@ -726,22 +726,22 @@ export function getStoryVoiceDirection(gameId: string): Record<VoiceRole, Partia
       neutral: { voiceStyle: 'cinematic' },
     },
     'pirate-legend': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     },
     'ancient-mystery': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     },
     'palace-intrigue': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     },
     'wilderness-survival': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     },
     'campus-mystery': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     },
     'desert-kingdom': {
-      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1.04, pitchAdjust: 1.01, volumeAdjust: 1 },
+      narrator: { voiceStyle: 'humanFemale', rateAdjust: 1, pitchAdjust: 1, volumeAdjust: 0.99 },
     },
   };
 
