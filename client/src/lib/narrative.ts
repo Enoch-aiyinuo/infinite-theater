@@ -548,6 +548,7 @@ function scoreVoiceName(name: string, role: VoiceRole, language: Language) {
     if (/compact|eelo/.test(lowered)) score -= 3;
   } else {
     if (/samantha|karen|moira|ava|victoria|zira|serena|allison|\baria\b|tessa|fiona|\bflo\b|sandy|shelley/.test(lowered)) score += 4;
+    if (/google|natural|enhanced|neural|premium/.test(lowered)) score += 2;
     if (/premium|enhanced|natural|neural/.test(lowered)) score += 3;
   }
 
@@ -622,9 +623,9 @@ export function getVoiceStylePreset(label: VoiceStylePreset | string | undefined
     humanFemale: {
       label: language === 'en' ? 'Natural Female' : '真人女声',
       description: language === 'en' ? 'A more realistic female narrator voice with less synthetic pitch shaping.' : '更像真人讲故事的女性旁白，减少机械感和夸张变调。',
-      rate: 1,
-      pitch: 1,
-      volume: 0.99,
+      rate: language === 'en' ? 1.06 : 1,
+      pitch: language === 'en' ? 1.02 : 1,
+      volume: 1,
     },
     cold: {
       label: language === 'en' ? 'Icy Female' : '冰冷女声',

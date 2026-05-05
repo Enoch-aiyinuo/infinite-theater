@@ -1401,7 +1401,9 @@ export default function GamePlayer() {
       const resolvedSpeaker = segment.speaker;
       const role = detectVoiceRole(id, resolvedSpeaker, segmentText);
       const profile = role === 'narrator'
-        ? { pitch: 1, rate: 0.96, volume: 0.98 }
+        ? (language === 'en'
+            ? { pitch: 1.03, rate: 1.08, volume: 1 }
+            : { pitch: 1, rate: 0.96, volume: 0.98 })
         : (resolvedSpeaker && profiles[resolvedSpeaker]) || profiles['narrator'] || { pitch: 0.95, rate: 0.92, volume: 0.92 };
       const roleSettings = getSafeRoleSettings(role);
       const rolePreset = getVoiceStylePreset(roleSettings.voiceStyle, language);
@@ -1442,9 +1444,13 @@ export default function GamePlayer() {
         const rawPitch = profile.pitch * voicePreset.pitch * voicePitchAdjust * rolePreset.pitch * roleSettings.pitchAdjust * emotion.pitch;
         const rawRate = profile.rate * voicePreset.rate * voiceRateAdjust * rolePreset.rate * roleSettings.rateAdjust * emotion.rate;
         const rawVolume = profile.volume * voicePreset.volume * voiceVolumeAdjust * rolePreset.volume * roleSettings.volumeAdjust * emotion.volume;
-        utter.pitch = role === 'narrator' ? Math.min(1.32, Math.max(1.02, rawPitch)) : Math.min(1.32, rawPitch);
-        utter.rate = role === 'narrator' ? Math.min(1.08, Math.max(1.02, rawRate)) : Math.min(1.08, rawRate);
-        utter.volume = role === 'narrator' ? Math.min(1, Math.max(0.98, rawVolume)) : Math.min(1, rawVolume);
+        utter.pitch = role === 'narrator'
+          ? Math.min(1.3, Math.max(language === 'en' ? 1.0 : 1.02, rawPitch))
+          : Math.min(1.32, rawPitch);
+        utter.rate = role === 'narrator'
+          ? Math.min(1.12, Math.max(language === 'en' ? 1.06 : 1.02, rawRate))
+          : Math.min(1.08, rawRate);
+        utter.volume = role === 'narrator' ? Math.min(1, Math.max(0.99, rawVolume)) : Math.min(1, rawVolume);
         if (selectedVoice) utter.voice = selectedVoice;
         utteranceIndex += 1;
         const currentIndex = utteranceIndex;
