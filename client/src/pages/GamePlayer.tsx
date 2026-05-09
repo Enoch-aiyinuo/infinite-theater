@@ -1130,21 +1130,32 @@ function getChoiceDisplayText(choice: StoryChoice, story: StoryNode[], game: Gam
   if (strongestDelta && stat) {
     const deltaValue = strongestDelta[1];
     const statPush = language === 'en'
-      ? `${deltaValue > 0 ? 'Gain' : 'Spend'} ${stat.label}`
-      : `${deltaValue > 0 ? '提升' : '牺牲'}${stat.label}`;
+      ? `${deltaValue > 0 ? 'Strengthen' : 'Risk'} ${stat.label}`
+      : `${deltaValue > 0 ? '强化' : '押上'}${stat.label}`;
     const destination = nextScene
-      ? language === 'en' ? ` and move toward ${nextScene}` : `，推进到${nextScene}`
+      ? language === 'en' ? ` to test ${nextScene}` : `，去验证${nextScene}`
       : '';
     return `${statPush}${destination}`;
   }
 
   if (nextScene) {
-    return language === 'en' ? `Move toward ${nextScene}` : `前往${nextScene}继续调查`;
+    const sceneFallbacks = language === 'en'
+      ? [
+          `Follow the unease into ${nextScene}`,
+          `Enter ${nextScene} and test the contradiction`,
+          `Circle back through ${nextScene} for the clue everyone missed`,
+        ]
+      : [
+          `顺着不安感进入${nextScene}`,
+          `去${nextScene}验证矛盾`,
+          `绕回${nextScene}寻找被忽略的线索`,
+        ];
+    return sceneFallbacks[((choice.label || 'A').charCodeAt(0) + choice.next) % sceneFallbacks.length];
   }
 
   const fallbackLabels = language === 'en'
-    ? ['Take the direct route', 'Play it carefully', 'Look for another angle']
-    : ['直接推进', '谨慎处理', '寻找另一条线索'];
+    ? ['Press the most suspicious detail', 'Hold back and watch who reacts', 'Break the obvious answer first']
+    : ['咬住最可疑的细节', '先按兵不动，观察谁露出破绽', '先推翻最像答案的答案'];
   return fallbackLabels[((choice.label || 'A').charCodeAt(0) + choice.next) % fallbackLabels.length];
 }
 
