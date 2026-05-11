@@ -1969,7 +1969,7 @@ export default function GamePlayer() {
   const nextUnfoundEnding = game.endings.find(ending => !optimisticEndingIds.has(ending.id));
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="min-h-screen luxe-screen flex flex-col relative overflow-hidden">
       {/* 动态背景图片 */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -1983,7 +1983,7 @@ export default function GamePlayer() {
             backgroundImage: `url("${resolvedBgImage}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'brightness(0.22) saturate(0.78)',
+            filter: 'brightness(0.34) saturate(1.16) contrast(1.04)',
           }}
         />
       </AnimatePresence>
@@ -2000,7 +2000,7 @@ export default function GamePlayer() {
           backgroundImage: `url("${resolvedBgImage}")`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.22,
+          opacity: 0.34,
           mixBlendMode: 'screen',
         }}
       />
@@ -2017,12 +2017,12 @@ export default function GamePlayer() {
       <div
         className="fixed inset-0 z-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(to bottom, oklch(0.06 0.015 260 / 0.7) 0%, transparent 40%, oklch(0.06 0.015 260 / 0.95) 80%)',
+          background: 'linear-gradient(to bottom, oklch(0.06 0.015 260 / 0.48) 0%, oklch(0.06 0.015 260 / 0.18) 40%, oklch(0.05 0.015 260 / 0.82) 82%)',
         }}
       />
 
       {/* 顶部工具栏 */}
-      <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b border-white/5 bg-black/40 backdrop-blur-md flex items-center px-4 gap-3">
+      <header className="fixed top-0 left-0 right-0 z-50 h-14 luxe-topbar flex items-center px-4 gap-3">
         <Button
           variant="ghost"
           size="sm"
@@ -2095,7 +2095,7 @@ export default function GamePlayer() {
       </header>
 
       {/* 数值栏 */}
-      <div className="fixed top-14 left-0 right-0 z-40 bg-black/30 backdrop-blur-sm border-b border-white/5 px-4 py-2">
+      <div className="fixed top-14 left-0 right-0 z-40 luxe-statbar px-4 py-2">
         <div className="max-w-2xl mx-auto flex gap-4">
           {gameStats.map(stat => (
             <div key={stat.key} className="flex-1 min-w-0">
@@ -2125,14 +2125,7 @@ export default function GamePlayer() {
       <main className="relative z-10 flex-1 pt-28 pb-8 px-4 flex flex-col items-center">
         <div className="w-full max-w-2xl flex flex-col gap-5">
           {!audioReady && (
-            <div
-              className="rounded-2xl border px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
-              style={{
-                background: 'oklch(0.09 0.02 260 / 0.9)',
-                borderColor: 'oklch(0.72 0.12 75 / 0.32)',
-                backdropFilter: 'blur(18px)',
-              }}
-            >
+            <div className="luxe-glass rounded-2xl px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div>
                 <div className="text-xs uppercase tracking-[0.22em] text-primary/80 mb-1">
                   {language === 'en' ? 'Sound waiting for your tap' : '声音等待开启'}
@@ -2144,7 +2137,7 @@ export default function GamePlayer() {
                 </p>
               </div>
               <Button
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="luxe-action font-semibold"
                 onClick={unlockAudioNow}
               >
                 {language === 'en' ? 'Tap to start sound' : '点击开启声音'}
@@ -2153,14 +2146,7 @@ export default function GamePlayer() {
           )}
 
           {showVoicePanel && (
-            <div
-              className="rounded-2xl border p-4 grid gap-4"
-              style={{
-                background: 'oklch(0.08 0.015 260 / 0.9)',
-                borderColor: 'oklch(0.25 0.02 260 / 0.65)',
-                backdropFilter: 'blur(18px)',
-              }}
-            >
+            <div className="luxe-glass rounded-2xl p-4 grid gap-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="text-xs uppercase tracking-[0.22em] text-primary/75 mb-1">
@@ -2426,28 +2412,14 @@ export default function GamePlayer() {
 
           {nodePresentation && (
             <div className="grid grid-cols-1 md:grid-cols-[1.25fr_0.75fr] gap-3">
-              <div
-                className="rounded-2xl p-4 border"
-                style={{
-                  background: 'oklch(0.09 0.015 260 / 0.86)',
-                  borderColor: 'oklch(0.25 0.02 260 / 0.65)',
-                  backdropFilter: 'blur(16px)',
-                }}
-              >
+              <div className="luxe-glass rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-2 text-xs text-white/45 tracking-[0.2em] uppercase">
                   <span>Mission</span>
                   <span className="h-px flex-1 bg-white/8" />
                 </div>
                 <p className="text-sm md:text-[15px] leading-relaxed text-white/88">{nodePresentation.objective}</p>
               </div>
-              <div
-                className="rounded-2xl p-4 border"
-                style={{
-                  background: 'oklch(0.09 0.015 260 / 0.78)',
-                  borderColor: 'oklch(0.72 0.12 75 / 0.26)',
-                  backdropFilter: 'blur(16px)',
-                }}
-              >
+              <div className="luxe-glass rounded-2xl p-4">
                 <div className="text-xs text-primary/80 tracking-[0.18em] uppercase mb-2">
                   {nodePresentation.pulseLabel}
                 </div>
@@ -2466,14 +2438,9 @@ export default function GamePlayer() {
               transition={{ duration: 0.4 }}
             >
               <div
-                className="rounded-2xl p-6 md:p-8 cursor-pointer select-none"
+                className="luxe-story-panel rounded-2xl p-6 md:p-8 cursor-pointer select-none"
                 onClick={skipTyping}
-                style={{
-                  background: 'oklch(0.08 0.015 260 / 0.85)',
-                  border: '1px solid oklch(0.25 0.02 260 / 0.6)',
-                  backdropFilter: 'blur(16px)',
-                  minHeight: '180px',
-                }}
+                style={{ minHeight: '180px' }}
               >
                 {/* 场景标签 + 说话角色 */}
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
@@ -2541,20 +2508,7 @@ export default function GamePlayer() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.08 }}
                     onClick={() => makeChoice(idx)}
-                    className="group w-full text-left rounded-xl p-4 transition-all duration-200 flex items-start gap-3"
-                    style={{
-                      background: 'oklch(0.10 0.015 260 / 0.7)',
-                      border: '1px solid oklch(0.22 0.02 260 / 0.6)',
-                      backdropFilter: 'blur(8px)',
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'oklch(0.14 0.02 260 / 0.85)';
-                      (e.currentTarget as HTMLElement).style.borderColor = 'oklch(0.72 0.12 75 / 0.4)';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'oklch(0.10 0.015 260 / 0.7)';
-                      (e.currentTarget as HTMLElement).style.borderColor = 'oklch(0.22 0.02 260 / 0.6)';
-                    }}
+                    className="luxe-choice group w-full text-left rounded-xl p-4 transition-all duration-200 flex items-start gap-3"
                   >
                     <span
                       className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold mt-0.5"
@@ -2601,11 +2555,9 @@ export default function GamePlayer() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="rounded-2xl p-8 text-center"
+                className="luxe-glass rounded-2xl p-8 text-center"
                 style={{
-                  background: `${endingColor}12`,
-                  border: `1px solid ${endingColor}40`,
-                  backdropFilter: 'blur(16px)',
+                  borderColor: `${endingColor}55`,
                 }}
               >
                 <div className="text-5xl mb-4">

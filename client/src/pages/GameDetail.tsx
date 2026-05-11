@@ -42,7 +42,7 @@ export default function GameDetail() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen luxe-screen">
       {/* 顶部封面 */}
       <div className="relative h-72 md:h-96 overflow-hidden">
         <img
@@ -125,7 +125,7 @@ export default function GameDetail() {
                 <span className="w-1 h-5 bg-primary rounded-full" />
                 剧情介绍
               </h2>
-              <div className="bg-card border border-border rounded-xl p-6">
+              <div className="luxe-glass rounded-xl p-6">
                 <div className="grid gap-3 mb-5">
                   <div className="rounded-xl border border-primary/15 bg-primary/5 px-4 py-3">
                     <p className="text-[11px] uppercase tracking-[0.24em] text-primary/70 mb-1">
@@ -169,10 +169,13 @@ export default function GameDetail() {
                   return (
                     <div
                       key={ending.id}
-                      className="bg-card border rounded-lg p-4 transition-all"
+                    className="bg-card border rounded-xl p-4 transition-all"
                       style={{
                         borderColor: isCollected ? `${color}40` : 'oklch(0.22 0.02 260)',
-                        background: isCollected ? `${color}08` : 'oklch(0.11 0.015 260)',
+                        background: isCollected
+                          ? `linear-gradient(135deg, ${color}14, oklch(0.10 0.018 260 / 0.92))`
+                          : 'linear-gradient(135deg, oklch(0.14 0.022 260 / 0.92), oklch(0.09 0.015 260 / 0.94))',
+                        boxShadow: isCollected ? `0 0 22px ${color}16` : undefined,
                       }}
                     >
                       <div className="flex items-start gap-3">
@@ -225,7 +228,7 @@ export default function GameDetail() {
           {/* 右侧：操作面板 */}
           <div className="space-y-4">
             {/* 游戏信息卡 */}
-            <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+            <div className="luxe-glass rounded-xl p-5 space-y-4">
               <h3 className="font-serif-sc text-base font-semibold text-foreground">游戏信息</h3>
               <div className="space-y-3">
                 {[
@@ -267,7 +270,7 @@ export default function GameDetail() {
 
             {/* 进度卡 */}
             {progress && (
-              <div className="bg-card border border-border rounded-xl p-5">
+              <div className="luxe-glass rounded-xl p-5">
                 <h3 className="font-serif-sc text-base font-semibold text-foreground mb-3">当前进度</h3>
                 <div className="text-sm text-muted-foreground space-y-1.5">
                   <div className="flex justify-between">
@@ -290,7 +293,7 @@ export default function GameDetail() {
                 {progress && !progress.isCompleted ? (
                   <>
                     <Button
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+                      className="luxe-action w-full font-semibold"
                       onClick={handleContinue}
                     >
                       <Play size={15} className="mr-2" />
@@ -307,7 +310,7 @@ export default function GameDetail() {
                   </>
                 ) : (
                   <Button
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+                      className="luxe-action w-full font-semibold"
                     onClick={handleStart}
                   >
                     <Play size={15} className="mr-2" />
@@ -316,7 +319,7 @@ export default function GameDetail() {
                 )}
               </div>
             ) : (
-              <div className="bg-card border border-border rounded-xl p-5 text-center">
+              <div className="luxe-glass rounded-xl p-5 text-center">
                 <Lock size={24} className="text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">{game.unlockDescription}</p>
               </div>

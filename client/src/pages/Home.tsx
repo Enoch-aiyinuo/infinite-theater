@@ -68,7 +68,7 @@ export default function Home() {
     color.startsWith('oklch(') ? color.replace(/\)$/, ` / ${alpha})`) : color;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen luxe-screen">
       <section className="relative overflow-hidden px-4 pt-8 pb-12 md:px-6 md:pt-12 md:pb-16">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-x-[8%] top-10 h-[440px] rounded-[3rem] bg-[radial-gradient(circle_at_top,oklch(0.72_0.12_75_/_0.18),transparent_56%)]" />
@@ -79,14 +79,7 @@ export default function Home() {
         </div>
 
         <div className="container relative z-10">
-          <div
-            className="relative overflow-hidden rounded-[2rem] border px-6 py-8 md:px-10 md:py-12"
-            style={{
-              borderColor: 'oklch(0.72 0.12 75 / 0.18)',
-              background: 'linear-gradient(145deg, oklch(0.10 0.018 260 / 0.98), oklch(0.08 0.015 260 / 0.94))',
-              boxShadow: '0 32px 90px oklch(0 0 0 / 0.45), inset 0 1px 0 oklch(0.72 0.12 75 / 0.08), inset 0 0 0 1px oklch(0.60 0.16 214 / 0.06)',
-            }}
-          >
+          <div className="luxe-glass relative rounded-[2rem] px-6 py-8 md:px-10 md:py-12">
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute inset-x-8 top-0 h-1.5 rounded-full bg-gradient-to-r from-amber-300 via-sky-400 via-fuchsia-400 to-amber-300" />
               <div className="absolute right-0 top-0 h-64 w-64 bg-[radial-gradient(circle,oklch(0.72_0.12_75_/_0.16),transparent_70%)] blur-2xl" />
@@ -137,7 +130,7 @@ export default function Home() {
 
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row animate-fade-in delay-400">
                   <Button
-                    className="group min-w-[220px] border-0 bg-gradient-to-r from-amber-300 via-sky-400 to-fuchsia-500 text-slate-950 hover:from-amber-200 hover:via-sky-300 hover:to-fuchsia-400 shadow-[0_0_28px_oklch(0.72_0.12_75_/_0.22),0_0_36px_oklch(0.60_0.16_214_/_0.18)]"
+                    className="luxe-action group min-w-[220px] font-semibold"
                     onClick={() => navigate(`/game/${featuredGame.id}`)}
                   >
                     <Play size={16} className="mr-2" />
@@ -298,13 +291,7 @@ export default function Home() {
 
       <section className="container pb-10">
         <div className="grid gap-4 md:grid-cols-[1.15fr_0.85fr]">
-          <div
-            className="rounded-[1.75rem] border px-5 py-5 md:px-6"
-            style={{
-              borderColor: 'oklch(0.72 0.12 75 / 0.16)',
-              background: 'linear-gradient(180deg, oklch(0.11 0.015 260 / 0.92), oklch(0.095 0.012 260 / 0.94))',
-            }}
-          >
+          <div className="luxe-glass rounded-[1.75rem] px-5 py-5 md:px-6">
             <div className="flex items-center justify-between gap-3 mb-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.22em] text-primary/75 mb-1">
@@ -326,13 +313,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div
-            className="rounded-[1.75rem] border px-5 py-5 md:px-6"
-            style={{
-              borderColor: 'oklch(0.22 0.02 260)',
-              background: 'linear-gradient(180deg, oklch(0.11 0.015 260 / 0.92), oklch(0.09 0.01 260 / 0.94))',
-            }}
-          >
+          <div className="luxe-glass rounded-[1.75rem] px-5 py-5 md:px-6">
             <p className="text-xs uppercase tracking-[0.22em] text-primary/75 mb-2">
               {language === 'zh' ? '下一目标' : 'Next Unlock'}
             </p>
@@ -385,11 +366,12 @@ export default function Home() {
             return (
               <div
                 key={game.id}
-                className={`group relative rounded-xl border overflow-hidden card-hover cursor-pointer animate-fade-in-up`}
+                className={`group relative rounded-2xl border overflow-hidden card-hover cursor-pointer animate-fade-in-up`}
                 style={{
                   animationDelay: `${index * 0.15}s`,
                   borderColor: unlocked ? tint(game.genreColor, 0.34) : 'oklch(0.16 0.02 260)',
-                  background: `linear-gradient(180deg, oklch(0.11 0.018 260), oklch(0.09 0.015 260)), radial-gradient(circle at top left, ${tint(game.genreColor, 0.12)}, transparent 42%)`,
+                  background: `linear-gradient(180deg, oklch(0.15 0.024 260), oklch(0.085 0.016 260)), radial-gradient(circle at top left, ${tint(game.genreColor, 0.22)}, transparent 46%), radial-gradient(circle at bottom right, oklch(0.76 0.15 205 / 0.10), transparent 36%)`,
+                  boxShadow: unlocked ? `0 18px 44px oklch(0 0 0 / 0.28), 0 0 24px ${tint(game.genreColor, 0.13)}` : undefined,
                 }}
                 onClick={() => unlocked && navigate(`/game/${game.id}`)}
               >
@@ -562,7 +544,8 @@ export default function Home() {
                       className="w-full border transition-all text-slate-950 hover:opacity-95"
                       style={{
                         borderColor: tint(game.genreColor, 0.4),
-                        background: `linear-gradient(90deg, ${tint(game.genreColor, 0.34)}, oklch(0.72 0.12 75 / 0.88))`,
+                        background: `linear-gradient(90deg, oklch(0.94 0.06 92), ${tint(game.genreColor, 0.9)}, oklch(0.76 0.15 205 / 0.88))`,
+                        boxShadow: `0 0 22px ${tint(game.genreColor, 0.24)}, 0 0 34px oklch(0.76 0.15 205 / 0.16)`,
                       }}
                       variant="outline"
                       onClick={(e) => {
