@@ -706,10 +706,10 @@ const STORY_SOUND_PROFILES: Record<string, StorySoundProfile> = {
   'desert-kingdom': { droneType: 'sawtooth', droneFreq: 51, undertoneFreq: 20, eerieType: 'square', eerieFreq: 137, eerieLfoFreq: 0.057, shadowFreqOffset: 19, shadowDetune: -35, shadowGainScale: 0.19, rumbleFreq: 15, rumbleGainScale: 0.3, pulseFreq: 70, pulseLfoFreq: 0.035, noiseFilterType: 'bandpass', noiseFrequency: 430, noiseGain: 0.048, tensionGainBase: 0.26, undertoneGainScale: 0.88, eerieGainScale: 0.27, pulseGainScale: 0.58, pulseAttack: 0.78, pulseRelease: 4.5 },
 };
 
-const AMBIENT_MASTER_GAIN = 1.1;
-const AMBIENT_TENSION_BOOST = 1.12;
-const AMBIENT_NOISE_BOOST = 1.1;
-const AMBIENT_DREAD_LAYER_GAIN = 0.2;
+const AMBIENT_MASTER_GAIN = 0.18;
+const AMBIENT_TENSION_BOOST = 0.78;
+const AMBIENT_NOISE_BOOST = 0.3;
+const AMBIENT_DREAD_LAYER_GAIN = 0.08;
 
 function clamp(val: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, val));
@@ -1221,6 +1221,8 @@ export default function GamePlayer() {
   const speechTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ambientContextRef = useRef<AudioContext | null>(null);
   const ambientMasterRef = useRef<GainNode | null>(null);
+  const ambientToneRef = useRef<BiquadFilterNode | null>(null);
+  const ambientLimiterRef = useRef<DynamicsCompressorNode | null>(null);
   const ambientNodesRef = useRef<Array<AudioNode & { stop?: (when?: number) => void }>>([]);
   const settingsHydratedRef = useRef(false);
   const audioUnlockedRef = useRef(false);
@@ -1228,7 +1230,11 @@ export default function GamePlayer() {
   const currentNode = story?.find(n => n.id === currentNodeId);
   const localizedNodeText = getLocalizedText(currentNode, language);
   const localizedScene = getLocalizedScene(currentNode, language);
-  const nodePresentation = currentNode && game ? getNodePresentation(currentNode, game, language) : null;
+  // Keep the soundscape stable while the typewriter effect re-renders the page.
+  const nodePresentation = React.useMemo(
+    () => currentNode && game ? getNodePresentation(currentNode, game, language) : null,
+    [currentNode, game, language],
+  );
   const gameStats = Array.isArray(game?.stats) ? game.stats : [];
   const choiceDeltaSummaries = currentNode?.choices?.map(choice => {
     const summary = game ? getChoiceDeltaSummary(choice, game, language) : [];
@@ -1604,7 +1610,22 @@ export default function GamePlayer() {
     if (!ambientMasterRef.current) {
       ambientMasterRef.current = context.createGain();
       ambientMasterRef.current.gain.value = 0;
-      ambientMasterRef.current.connect(context.destination);
+
+      ambientToneRef.current = context.createBiquadFilter();
+      ambientToneRef.current.type = 'lowpass';
+      ambientToneRef.current.frequency.value = 1500;
+      ambientToneRef.current.Q.value = 0.65;
+
+      ambientLimiterRef.current = context.createDynamicsCompressor();
+      ambientLimiterRef.current.threshold.value = -24;
+      ambientLimiterRef.current.knee.value = 24;
+      ambientLimiterRef.current.ratio.value = 10;
+      ambientLimiterRef.current.attack.value = 0.012;
+      ambientLimiterRef.current.release.value = 0.28;
+
+      ambientMasterRef.current.connect(ambientToneRef.current);
+      ambientToneRef.current.connect(ambientLimiterRef.current);
+      ambientLimiterRef.current.connect(context.destination);
     }
 
     if (context.state === 'suspended') {
@@ -1620,9 +1641,19 @@ export default function GamePlayer() {
     const tensionMultiplier = nodePresentation?.tension === 'high' ? 1.48 : nodePresentation?.tension === 'medium' ? 1.25 : 1.05;
     const effectGainBump = effect === 'rain' || effect === 'fog' ? 0.052 : effect === 'scanlines' ? 0.04 : 0.025;
     const tensionGain = (storyProfile.tensionGainBase * tensionMultiplier + effectGainBump) * AMBIENT_TENSION_BOOST;
+    const toneFrequency = effect === 'rain'
+      ? 1350
+      : effect === 'snow'
+        ? 1100
+        : effect === 'scanlines'
+          ? 1750
+          : 1450;
+    ambientToneRef.current?.frequency.setTargetAtTime(toneFrequency, now, 0.08);
 
     const drone = context.createOscillator();
-    drone.type = effect === 'scanlines' ? 'sawtooth' : storyProfile.droneType;
+    drone.type = storyProfile.droneType === 'sawtooth' || storyProfile.droneType === 'square'
+      ? 'triangle'
+      : storyProfile.droneType;
     drone.frequency.setValueAtTime(storyProfile.droneFreq + (effect === 'starlight' ? 12 : effect === 'scanlines' ? 8 : 0), now);
     const droneGain = context.createGain();
     droneGain.gain.setValueAtTime(tensionGain, now);
@@ -1640,7 +1671,9 @@ export default function GamePlayer() {
     undertone.start();
 
     const eerie = context.createOscillator();
-    eerie.type = effect === 'scanlines' ? 'square' : storyProfile.eerieType;
+    eerie.type = storyProfile.eerieType === 'square' || storyProfile.eerieType === 'sawtooth'
+      ? 'triangle'
+      : storyProfile.eerieType;
     eerie.frequency.setValueAtTime(storyProfile.eerieFreq + (effect === 'rain' ? 10 : effect === 'scanlines' ? 12 : 0), now);
     const eerieGain = context.createGain();
     eerieGain.gain.setValueAtTime(tensionGain * storyProfile.eerieGainScale, now);
@@ -1657,7 +1690,7 @@ export default function GamePlayer() {
     eerieLfo.start();
 
     const shadow = context.createOscillator();
-    shadow.type = storyProfile.eerieType;
+    shadow.type = 'sine';
     shadow.frequency.setValueAtTime(storyProfile.eerieFreq + storyProfile.shadowFreqOffset, now);
     shadow.detune.setValueAtTime(storyProfile.shadowDetune, now);
     const shadowGain = context.createGain();
@@ -1675,7 +1708,7 @@ export default function GamePlayer() {
     shadowLfo.start();
 
     const dread = context.createOscillator();
-    dread.type = effect === 'scanlines' || id === 'horror-hospital' ? 'sawtooth' : 'triangle';
+    dread.type = 'triangle';
     dread.frequency.setValueAtTime(storyProfile.eerieFreq * 1.414 + (effect === 'fog' ? 7 : 0), now);
     dread.detune.setValueAtTime(effect === 'rain' ? -41 : -57, now);
     const dreadGain = context.createGain();
@@ -1734,13 +1767,20 @@ export default function GamePlayer() {
     noiseSource.buffer = createAmbientNoiseBuffer(context);
     noiseSource.loop = true;
     const noiseFilter = context.createBiquadFilter();
-    noiseFilter.type = effect === 'rain' || effect === 'snow' ? 'highpass' : storyProfile.noiseFilterType;
+    noiseFilter.type = effect === 'rain' || effect === 'snow' || storyProfile.noiseFilterType === 'highpass'
+      ? 'bandpass'
+      : storyProfile.noiseFilterType;
     noiseFilter.frequency.setValueAtTime(
-      storyProfile.noiseFrequency + (effect === 'rain' ? 320 : effect === 'snow' ? 180 : effect === 'fog' ? -60 : 0),
+      effect === 'rain'
+        ? 900
+        : effect === 'snow'
+          ? 680
+          : Math.max(120, storyProfile.noiseFrequency + (effect === 'fog' ? -60 : 0)),
       now,
     );
+    noiseFilter.Q.setValueAtTime(0.7, now);
     const noiseGain = context.createGain();
-    noiseGain.gain.setValueAtTime((storyProfile.noiseGain + (effect === 'rain' ? 0.022 : effect === 'fog' ? 0.016 : 0.008)) * AMBIENT_NOISE_BOOST, now);
+    noiseGain.gain.setValueAtTime((storyProfile.noiseGain + (effect === 'rain' ? 0.008 : effect === 'fog' ? 0.006 : 0.004)) * AMBIENT_NOISE_BOOST, now);
     noiseSource.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(master);
@@ -1748,7 +1788,7 @@ export default function GamePlayer() {
 
     master.gain.cancelScheduledValues(now);
     master.gain.setValueAtTime(0.0001, now);
-    master.gain.linearRampToValueAtTime(AMBIENT_MASTER_GAIN, now + 0.65);
+    master.gain.linearRampToValueAtTime(AMBIENT_MASTER_GAIN, now + 1.8);
 
     ambientNodesRef.current = [
       drone,
@@ -1797,22 +1837,6 @@ export default function GamePlayer() {
   }, [currentNode, isMuted, localizedNodeText, speakText, startAmbientSoundscape]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const unlockAudio = () => {
-      unlockAudioNow();
-      window.removeEventListener('pointerdown', unlockAudio);
-      window.removeEventListener('keydown', unlockAudio);
-    };
-
-    window.addEventListener('pointerdown', unlockAudio);
-    window.addEventListener('keydown', unlockAudio);
-    return () => {
-      window.removeEventListener('pointerdown', unlockAudio);
-      window.removeEventListener('keydown', unlockAudio);
-    };
-  }, [unlockAudioNow]);
-
-  useEffect(() => {
     if (isMuted) {
       stopAmbientSoundscape();
       return;
@@ -1827,6 +1851,9 @@ export default function GamePlayer() {
         void ambientContextRef.current.close();
         ambientContextRef.current = null;
       }
+      ambientMasterRef.current = null;
+      ambientToneRef.current = null;
+      ambientLimiterRef.current = null;
     };
   }, [stopAmbientSoundscape]);
 
@@ -2064,14 +2091,15 @@ export default function GamePlayer() {
             size="icon"
             className="w-8 h-8 text-white/60 hover:text-white"
             onClick={() => {
-              if (isMuted && !audioReady) {
+              if (!audioReady) {
                 unlockAudioNow();
+                return;
               }
               setIsMuted(!isMuted);
             }}
-            title={isMuted ? t('gamePlayer.buttons.speak') : t('gamePlayer.buttons.mute')}
+            title={!audioReady || isMuted ? t('gamePlayer.buttons.speak') : t('gamePlayer.buttons.mute')}
           >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            {!audioReady || isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </Button>
           <Button
             variant="ghost"
@@ -2132,8 +2160,8 @@ export default function GamePlayer() {
                 </div>
                 <p className="text-sm text-white/82 leading-relaxed">
                   {language === 'en'
-                    ? 'This is not an error. Chrome requires one tap before the game can play the natural female narration and darker ambient soundtrack.'
-                    : '这不是错误。Chrome 需要你点一次，游戏才能播放更真实的人类女声旁白和更阴森的背景音乐。'}
+                    ? 'This page stays silent until you choose to start the female narration and low-volume ambient soundtrack.'
+                    : '页面会保持安静；只有你主动开启后，才会播放女声旁白和低音量氛围音乐。'}
                 </p>
               </div>
               <Button
