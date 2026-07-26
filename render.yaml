@@ -5,8 +5,8 @@ services:
     plan: free
     autoDeployTrigger: commit
     healthCheckPath: /health
-    buildCommand: corepack pnpm install --frozen-lockfile && corepack pnpm build
-    startCommand: corepack pnpm start
+    buildCommand: npx --yes pnpm@10.4.1 install --frozen-lockfile && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
