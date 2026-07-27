@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { trpc } from '@/lib/trpc';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { getResolvedEndingId } from '@/data/story-registry';
+import { toast } from 'sonner';
 
 export interface GameSaveData {
   gameId: string;
@@ -127,9 +128,21 @@ export function useGameStore() {
   }, [fullDataQuery.data]);
 
   // tRPC mutations
-  const saveProgressMutation = trpc.game.saveProgress.useMutation();
-  const collectEndingMutation = trpc.game.collectEnding.useMutation();
-  const unlockAchievementMutation = trpc.game.unlockAchievement.useMutation();
+  const saveProgressMutation = trpc.game.saveProgress.useMutation({
+    onError: () => {
+      toast.error('云存档同步失败，本地进度仍已保留', { id: 'game-sync-error' });
+    },
+  });
+  const collectEndingMutation = trpc.game.collectEnding.useMutation({
+    onError: () => {
+      toast.error('结局已保存在本机，但暂时无法同步到云端', { id: 'game-sync-error' });
+    },
+  });
+  const unlockAchievementMutation = trpc.game.unlockAchievement.useMutation({
+    onError: () => {
+      toast.error('成就已保存在本机，但暂时无法同步到云端', { id: 'game-sync-error' });
+    },
+  });
 
   const updateStore = useCallback((updater: (prev: GameStore) => GameStore) => {
     setStore(prev => {

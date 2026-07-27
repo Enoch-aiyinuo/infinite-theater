@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Navbar from "./components/Navbar";
@@ -26,6 +26,9 @@ function Router() {
 }
 
 function Layout() {
+  const [location] = useLocation();
+  const isPlaying = location.startsWith("/play/");
+
   return (
     <div className="min-h-screen bg-background">
       {/* 背景装饰 */}
@@ -34,10 +37,10 @@ function Layout() {
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-primary/2 blur-3xl" />
       </div>
 
-      <Navbar />
+      {!isPlaying && <Navbar />}
 
       {/* 主内容区 */}
-      <main className="relative z-10 pt-16 pb-16 md:pb-0">
+      <main className={isPlaying ? "relative z-10" : "relative z-10 pt-16 pb-16 md:pb-0"}>
         <Router />
       </main>
 

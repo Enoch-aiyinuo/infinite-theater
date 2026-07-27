@@ -8,6 +8,27 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
+function installAnalytics() {
+  const endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT?.trim();
+  const websiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID?.trim();
+  if (!endpoint || !websiteId) return;
+
+  try {
+    const scriptUrl = new URL("umami", endpoint.endsWith("/") ? endpoint : `${endpoint}/`);
+    if (!["http:", "https:"].includes(scriptUrl.protocol)) return;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = scriptUrl.toString();
+    script.dataset.websiteId = websiteId;
+    document.head.appendChild(script);
+  } catch {
+    console.warn("[Analytics] Ignoring an invalid analytics endpoint.");
+  }
+}
+
+installAnalytics();
+
 const queryClient = new QueryClient();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {

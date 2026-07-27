@@ -23,6 +23,11 @@ import { DESERT_KINGDOM_STORY, DESERT_KINGDOM_INITIAL_STATS } from '@/data/story
 import type { StoryChoice, StoryNode } from '@/data/story-types';
 import { useGameStore } from '@/hooks/useGameStore';
 import { useLanguage } from '@/hooks/useLanguage';
+import {
+  buildDeductionDelta,
+  createDeductionGateId,
+  getDeductionChoiceTarget,
+} from '@/lib/story-deduction';
 import enTranslations from '@/locales/en.json';
 import zhTranslations from '@/locales/zh.json';
 import {
@@ -333,10 +338,6 @@ function getDeductionProfile(gameId: string) {
   return DEDUCTION_PROFILES[gameId] || DEFAULT_DEDUCTION_PROFILE;
 }
 
-function createDeductionGateId(endingNodeId: number, stage: number) {
-  return 900000 + endingNodeId * 10 + stage;
-}
-
 function findFallbackEnding(story: StoryNode[], originalEnding: StoryNode) {
   return (
     story.find(node => node.end && node.endType === 'bad') ||
@@ -393,22 +394,22 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
               label: 'A',
               text: stageOne.correct.text,
               textEn: stageOne.correct.textEn,
-              next: reviewGateId,
-              delta: { clues: 8, wisdom: 8, trust: 3, sanity: 3, exposure: 2, danger: 2 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 1, 'correct'),
+              delta: buildDeductionDelta(gameId, 'correct', 1),
             },
             {
               label: 'B',
               text: stageOne.redHerrings[0]?.text || DEFAULT_DEDUCTION_PROFILE.redHerrings[0].text,
               textEn: stageOne.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_PROFILE.redHerrings[0].textEn,
-              next: fallbackEnding.id,
-              delta: { clues: -6, wisdom: -6, trust: -4, sanity: -4, exposure: 8, danger: 8, stress: 8 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 1, 'wrong'),
+              delta: buildDeductionDelta(gameId, 'wrong', 1),
             },
             {
               label: 'C',
               text: stageOne.cost.text,
               textEn: stageOne.cost.textEn,
-              next: reviewGateId,
-              delta: { clues: 4, wisdom: 4, trust: -2, sanity: -2, exposure: 5, danger: 5, stress: 6 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 1, 'cost'),
+              delta: buildDeductionDelta(gameId, 'cost', 1),
             },
           ],
         });
@@ -424,22 +425,22 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
               label: 'A',
               text: stageTwo.correct.text,
               textEn: stageTwo.correct.textEn,
-              next: endingNode.id,
-              delta: { clues: 10, wisdom: 10, trust: 4, sanity: 4, exposure: 3, danger: 3 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 2, 'correct'),
+              delta: buildDeductionDelta(gameId, 'correct', 2),
             },
             {
               label: 'B',
               text: stageTwo.redHerrings[0]?.text || DEFAULT_DEDUCTION_FOLLOW_UP.redHerrings[0].text,
               textEn: stageTwo.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_FOLLOW_UP.redHerrings[0].textEn,
-              next: fallbackEnding.id,
-              delta: { clues: -8, wisdom: -8, trust: -4, sanity: -4, exposure: 9, danger: 9, stress: 8 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 2, 'wrong'),
+              delta: buildDeductionDelta(gameId, 'wrong', 2),
             },
             {
               label: 'C',
               text: stageTwo.cost.text,
               textEn: stageTwo.cost.textEn,
-              next: endingNode.id,
-              delta: { clues: 6, wisdom: 6, trust: -3, sanity: -3, exposure: 6, danger: 6, stress: 6 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 2, 'cost'),
+              delta: buildDeductionDelta(gameId, 'cost', 2),
             },
           ],
         });
@@ -455,22 +456,22 @@ function enhanceStoryWithDeductionGates(story: StoryNode[] = [], gameId: string)
               label: 'A',
               text: stageThree.correct.text,
               textEn: stageThree.correct.textEn,
-              next: endingNode.id,
-              delta: { clues: 12, wisdom: 12, trust: 5, sanity: 5, exposure: 4, danger: 4 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 3, 'correct'),
+              delta: buildDeductionDelta(gameId, 'correct', 3),
             },
             {
               label: 'B',
               text: stageThree.redHerrings[0]?.text || DEFAULT_DEDUCTION_FINAL.redHerrings[0].text,
               textEn: stageThree.redHerrings[0]?.textEn || DEFAULT_DEDUCTION_FINAL.redHerrings[0].textEn,
-              next: fallbackEnding.id,
-              delta: { clues: -10, wisdom: -10, trust: -5, sanity: -5, exposure: 10, danger: 10, stress: 10 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 3, 'wrong'),
+              delta: buildDeductionDelta(gameId, 'wrong', 3),
             },
             {
               label: 'C',
               text: stageThree.cost.text,
               textEn: stageThree.cost.textEn,
-              next: endingNode.id,
-              delta: { clues: 8, wisdom: 8, trust: -4, sanity: -4, exposure: 7, danger: 7, stress: 8 },
+              next: getDeductionChoiceTarget(endingNode.id, fallbackEnding.id, 3, 'cost'),
+              delta: buildDeductionDelta(gameId, 'cost', 3),
             },
           ],
         });
@@ -2051,6 +2052,7 @@ export default function GamePlayer() {
       {/* 顶部工具栏 */}
       <header className="fixed top-0 left-0 right-0 z-50 h-14 luxe-topbar flex items-center px-4 gap-3">
         <Button
+          aria-label={t('gamePlayer.buttons.exitGame')}
           variant="ghost"
           size="sm"
           className="gap-1.5 text-white/60 hover:text-white"
@@ -2079,6 +2081,7 @@ export default function GamePlayer() {
             </span>
           )}
           <Button
+            aria-label={language === 'en' ? 'Story history' : '剧情记录'}
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-white/60 hover:text-white"
@@ -2087,6 +2090,7 @@ export default function GamePlayer() {
             <BookOpen className="w-4 h-4" />
           </Button>
           <Button
+            aria-label={!audioReady || isMuted ? t('gamePlayer.buttons.speak') : t('gamePlayer.buttons.mute')}
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-white/60 hover:text-white"
@@ -2102,6 +2106,7 @@ export default function GamePlayer() {
             {!audioReady || isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </Button>
           <Button
+            aria-label={language === 'en' ? 'Voice settings' : '语音设置'}
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-white/60 hover:text-white"
@@ -2111,6 +2116,7 @@ export default function GamePlayer() {
             <SlidersHorizontal className="w-4 h-4" />
           </Button>
           <Button
+            aria-label={t('gamePlayer.buttons.restart')}
             variant="ghost"
             size="icon"
             className="w-8 h-8 text-white/60 hover:text-white"
@@ -2151,21 +2157,21 @@ export default function GamePlayer() {
 
       {/* 主内容区 */}
       <main className="relative z-10 flex-1 pt-28 pb-8 px-4 flex flex-col items-center">
-        <div className="w-full max-w-2xl flex flex-col gap-5">
+        <div className="w-full max-w-2xl flex flex-col gap-3 sm:gap-5">
           {!audioReady && (
-            <div className="luxe-glass rounded-2xl px-4 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div>
+            <div className="luxe-glass rounded-2xl px-3 py-3 sm:px-4 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+              <div className="min-w-0">
                 <div className="text-xs uppercase tracking-[0.22em] text-primary/80 mb-1">
                   {language === 'en' ? 'Sound waiting for your tap' : '声音等待开启'}
                 </div>
-                <p className="text-sm text-white/82 leading-relaxed">
+                <p className="hidden sm:block text-sm text-white/82 leading-relaxed">
                   {language === 'en'
                     ? 'This page stays silent until you choose to start the female narration and low-volume ambient soundtrack.'
                     : '页面会保持安静；只有你主动开启后，才会播放女声旁白和低音量氛围音乐。'}
                 </p>
               </div>
               <Button
-                className="luxe-action font-semibold"
+                className="luxe-action h-9 w-full sm:w-auto font-semibold"
                 onClick={unlockAudioNow}
               >
                 {language === 'en' ? 'Tap to start sound' : '点击开启声音'}
@@ -2439,7 +2445,7 @@ export default function GamePlayer() {
           )}
 
           {nodePresentation && (
-            <div className="grid grid-cols-1 md:grid-cols-[1.25fr_0.75fr] gap-3">
+            <div className="hidden sm:grid grid-cols-1 md:grid-cols-[1.25fr_0.75fr] gap-3">
               <div className="luxe-glass rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-2 text-xs text-white/45 tracking-[0.2em] uppercase">
                   <span>Mission</span>
@@ -2466,10 +2472,19 @@ export default function GamePlayer() {
               transition={{ duration: 0.4 }}
             >
               <div
-                className="luxe-story-panel rounded-2xl p-6 md:p-8 cursor-pointer select-none"
+                className={`luxe-story-panel rounded-2xl p-4 sm:p-6 md:p-8 cursor-pointer select-none ${
+                  showChoices && !isEnded ? 'max-h-[52vh] overflow-y-auto overscroll-contain sm:max-h-none sm:overflow-visible' : ''
+                }`}
                 onClick={skipTyping}
                 style={{ minHeight: '180px' }}
               >
+                {nodePresentation && (
+                  <div className="sm:hidden mb-3 rounded-xl border border-primary/10 bg-primary/5 px-3 py-2">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-primary/70 mb-1">Mission</p>
+                    <p className="text-xs leading-relaxed text-white/75">{nodePresentation.objective}</p>
+                  </div>
+                )}
+
                 {/* 场景标签 + 说话角色 */}
                 <div className="flex items-center gap-2 mb-4 flex-wrap">
                   {localizedScene && (
